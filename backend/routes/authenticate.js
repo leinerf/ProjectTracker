@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import { createJWT } from '../util.js';
 
 export default (db) => {
     const router = express.Router();
@@ -11,15 +12,11 @@ export default (db) => {
             const user = await db.User.findOne({ where: { email: resp.data.email } })
             if (user) {
                 const { username, email, id } = user.toJSON();
-                const userToken = jwt.sign({
-                    username,
-                    email,
-                    id
-                }, process.env.JWT_SECRET, { expiresIn: Math.floor(Date.now() / 1000) + (60 * parseInt(process.env.JWT_EXPIRATION)) });
+                const userToken = createJWT({ username, email, id });
                 return res.json({ verified_email: true, username, email, token: userToken });
             }
         }
-        return res.json({ verified_email: false })
+        return res.json({ verified_email: false });
     })
 
     router.post("/google-signup", async(req, res) => {
@@ -33,16 +30,11 @@ export default (db) => {
                 email,
                 password: "google-auth"
             })
-            const userToken = jwt.sign({
-                username,
-                email,
-                id
-            }, process.env.JWT_SECRET, { expiresIn: Math.floor(Date.now() / 1000) + (60 * process.env.JWT_SECRET) });
-
+            const userToken = createJWT({ username, email, id })
             return res.json({ verified_email: true, username, email, token: userToken });
         }
 
-        return res.json({ verified_email: false })
+        return res.json({ verified_email: false });
     })
 
     return router;
