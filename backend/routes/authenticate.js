@@ -12,13 +12,11 @@ export default (db) => {
             const user = await db.User.findOne({ where: { email: resp.data.email } })
             if (user) {
                 const { username, email, id } = user.toJSON();
-                const userToken = createJWT({ username, email, id });
-                console.log("it gets here")
-                console.log(userToken);
+                const userToken = createJWT({ id });
                 return res.cookie('auth_jwt', userToken, {
                     httpOnly: true,
                     secure: true,
-                    maxAge: 60 * 60 * 1000 // 1 hour
+                    // maxAge: 60 * 60 * 1000 * process.env.JWT_EXPIRATION
                 }).json({ verified_email: true, username, email });
 
             }
@@ -38,12 +36,11 @@ export default (db) => {
                 password: "google-auth"
             })
             const { id } = user.toJSON();
-            const userToken = createJWT({ username, email, id })
-            console.log("it gets here")
+            const userToken = createJWT({ id })
             return res.cookie('auth_jwt', userToken, {
                 httpOnly: true,
                 secure: true,
-                maxAge: 60 * 60 * 1000 // 1 hour
+                // maxAge: 60 * 60 * 1000 * process.env.JWT_EXPIRATION
             }).json({ verified_email: true, username, email });
         }
 
