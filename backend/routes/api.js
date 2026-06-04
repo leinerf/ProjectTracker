@@ -7,7 +7,6 @@ export default (db) => {
     const router = express.Router();
 
     router.get("/ping", (req, res) => {
-        //Shows decoded token
         console.log(req.auth);
         return res.json({ msg: "cookie successful" })
     })
@@ -30,12 +29,15 @@ export default (db) => {
         return res.status(500).json({ msg: "something went wrong" });
     })
 
-    router.get("/task", async(req, res) => {
+    router.get("/tasks", async(req, res) => {
         try {
             const { id: userID } = req.auth;
             const tasks = await db.Task.findAll({ where: { user_id: userID } });
-            console.log(tasks); //update this once we have tasks to add
-            return res.status(200).json({ tasks: ["example1", "example2", "example3", "example4"] });
+            const taskList = tasks.map(task => {
+                const { name, description, id, completed } = task.dataValues
+                return { name, description, id, completed }
+            });
+            return res.status(200).json({ tasks: taskList });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
@@ -45,8 +47,53 @@ export default (db) => {
     router.post("/task", async(req, res) => {
         try {
             const { id: userID } = req.auth;
-            const {} = req.body;
+            const { name, description } = req.body;
+            const task = await db.Task.create({ name, description, user_id: userID });
             return res.status(200).json({ msg: "task added" });
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ err })
+        }
+    })
+
+    router.get("/task/:id", async(req, res) => {
+        const id = req.params.id
+        const { id: userID } = req.auth;
+        try {
+            const task = await db.Task.findOne({ where: { id, user_id: userID } });
+            return res.status(200).json({ msg: "task read", task: task.toJSON() });
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ err })
+        }
+    })
+
+    router.put("/task/:id", async(req, res) => {
+        const id = req.params.id
+        const { id: userID } = req.auth;
+        try {
+            const { name, description, completed } = req.body;
+            const task = await db.Task.findOne({ where: { id, user_id: userID } });
+            task.set({
+                name: name !== undefined ? name : task.name,
+                description: description !== undefined ? description : task.description,
+                completed: completed !== undefined ? completed : task.completed
+            })
+            await task.save();
+            return res.status(200).json({ msg: "task updated", task: task.toJSON() });
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ err })
+        }
+    })
+
+    router.delete("/task/:id", async(req, res) => {
+        const id = req.params.id
+        const { id: userID } = req.auth;
+        try {
+            const task = await db.Task.findOne({ where: { id, user_id: userID } });
+            await task.destroy();
+            return res.status(200).json({ msg: "task deleted" });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })

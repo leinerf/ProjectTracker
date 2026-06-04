@@ -33,6 +33,10 @@ const Task = sequelize.define(
                 // - `Deferrable.NOT` - Don't defer the checks at all (default) - This won't allow you to dynamically change the rule in a transaction
             },
             allowNull: false
+        },
+        completed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         }
     }
 )
