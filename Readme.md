@@ -1,11 +1,7 @@
 <!-- Change this to Cover Time Tracker -->
-# Welcome to Authenticate
-
-Authenticate is a template project that handles the hard task of creating database, and writing authentication code. This project uses jwt to authenticate users and saves it into the browser's cookies. We skipped the hashing step/handling of passwords and instead use Google Auth to authenticate users(Hey better Google than me). All this project needs is google oauth api(for verifying users), and a postgress database uri string(for saving users). 
-
+# Welcome to TaskTracker
 ## Setup Env file
 ```
-
 backend(save .env in backend folder)
 PORT=3000
 JWT_EXPIRATION=3 //how long should the jwt token last

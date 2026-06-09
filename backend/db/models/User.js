@@ -28,7 +28,7 @@ const User = sequelize.define(
 );
 
 //Only run if table doesn't exist 
-// await User.sync();
+await User.sync();
 //Only run if table needs to be updated
 // await User.sync({alter: true});
 export default User;

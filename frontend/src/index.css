@@ -35,3 +35,30 @@ body {
 .align-text>svg {
     margin-right: 3px;
 }
+
+.stopwatch-card {
+    width: 300px;
+    height: 150px;
+    border: solid;
+    border-radius: 5px;
+    border-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.stopwatch {
+    padding: 5px;
+    width: 60%;
+    height: 40%;
+    border: solid;
+    border-radius: 5px;
+    border-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.stopwatch>span {
+    font-size: 2.1em;
+}

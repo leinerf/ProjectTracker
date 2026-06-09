@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-
+import { useNavigate } from "react-router";
 import { pullTasks, addTask, updateTask, deleteTask } from "../util/api.js"
 
 function TaskModel({task, setTask, show, setShow, submitHandler}) {
@@ -50,6 +50,7 @@ function TaskModel({task, setTask, show, setShow, submitHandler}) {
 }
 
 function Tasks(){
+    let navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     
     const getTasks = async () => {
@@ -96,6 +97,10 @@ function Tasks(){
         setShowEdit(true)
         setTaskToEdit(task)
     }
+
+    const redirectBtnHandler = (task) => {
+        navigate(task.id)
+    }
     return <>
 
     <TaskModel task={taskToAdd} setTask={setTaskToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler}/>
@@ -139,6 +144,11 @@ function Tasks(){
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
                                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
                                                         <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                                                    </svg>
+                                                </Button>
+                                                <Button variant="primary" onClick={() => redirectBtnHandler(task)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-forward" viewBox="0 0 16 16">
+                                                    <path d="M9.502 5.513a.144.144 0 0 0-.202.134V6.65a.5.5 0 0 1-.5.5H2.5v2.9h6.3a.5.5 0 0 1 .5.5v1.003c0 .108.11.176.202.134l3.984-2.933.042-.028a.147.147 0 0 0 0-.252l-.042-.028zM8.3 5.647a1.144 1.144 0 0 1 1.767-.96l3.994 2.94a1.147 1.147 0 0 1 0 1.946l-3.994 2.94a1.144 1.144 0 0 1-1.767-.96v-.503H2a.5.5 0 0 1-.5-.5v-3.9a.5.5 0 0 1 .5-.5h6.3z"></path>
                                                     </svg>
                                                 </Button>
                                             </Stack>

@@ -34,6 +34,7 @@ function GoogleAuth({redirectURL, authType}) {
             const { username, email } = resp.data;
             //save to local storage and go forward
             localStorage.setItem("username", username)
+            localStorage.setItem("authenticated", true);
             localStorage.setItem("user-email", email)
             navigate(redirectURL);
         }
