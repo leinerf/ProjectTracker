@@ -24,10 +24,6 @@ app.use(cookieParser());
 //setup env variables
 const port = process.env.PORT;
 
-app.get('/', (req, res) => {
-    res.json('Hello World!');
-});
-
 app.use("/auth", authRouter(db));
 // app.use("/api", expressjwt({ secret: process.env.JWT_SECRET, algorithms: [process.env.JWT_ALGO] }), )
 

@@ -5,47 +5,67 @@ import { createJWT } from '../util.js';
 
 export default (db) => {
     const router = express.Router();
-    router.post("/google-signin", async(req, res) => {
+    router.get("/google-signin", async(req, res) => {
         const token = req.query["access_token"]
-        const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
-        if (resp.data.verified_email) {
-            const user = await db.User.findOne({ where: { email: resp.data.email } })
-            if (user) {
-                const { username, email, id } = user.toJSON();
-                const userToken = createJWT({ id });
-                return res.cookie('auth_jwt', userToken, {
+        try {
+            const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
+            if (resp.data.verified_email) {
+                const user = await db.User.findOne({ where: { email: resp.data.email } })
+                if (user) {
+                    const { username, email, id } = user.toJSON();
+                    const { token: userToken, expiresIn } = createJWT({ id });
+                    const currDate = new Date();
+                    const jwtExp = currDate.setSeconds(currDate.getSeconds() + expiresIn);
+                    return res.status(200).cookie('auth_jwt', userToken, {
+                        httpOnly: true,
+                        secure: true,
+                        maxAge: expiresIn * 1000 //cookie in miliseconds expiresIn is in seconds
+                    }).json({ jwt_exp: jwtExp, username, email });
+                }
+            }
+        } catch (err) {
+            console.error(err)
+        }
+
+        return res.status(500).json({ msg: "could not verify email" });
+    })
+
+    router.get("/google-signup", async(req, res) => {
+        const token = req.query["access_token"]
+        try {
+            const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
+            if (resp.data.verified_email) {
+                const { email, verified_email } = resp.data;
+                const username = email.substring(0, email.indexOf("@"));
+                const user = await db.User.create({
+                    username,
+                    email,
+                    password: "google-auth"
+                })
+                const { id } = user.toJSON();
+                const { token: userToken, expiresIn } = createJWT({ id });
+                const currDate = new Date()
+                const jwtExp = currDate.setSeconds(currDate.getSeconds() + expiresIn);
+                return res.status(200).cookie('auth_jwt', userToken, {
                     httpOnly: true,
                     secure: true,
-                    // maxAge: 60 * 60 * 1000 * process.env.JWT_EXPIRATION
-                }).json({ verified_email: true, username, email });
-
+                    maxAge: expiresIn * 1000 //cookie in miliseconds expiresIn is in seconds
+                }).json({ jwt_exp: jwtExp, username, email });
             }
-        }
-        return res.json({ verified_email: false });
-    })
-
-    router.post("/google-signup", async(req, res) => {
-        const token = req.query["access_token"]
-        const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
-        if (resp.data.verified_email) {
-            const { email, verified_email } = resp.data;
-            const username = email.substring(0, email.indexOf("@"));
-            const user = await db.User.create({
-                username,
-                email,
-                password: "google-auth"
-            })
-            const { id } = user.toJSON();
-            const userToken = createJWT({ id })
-            return res.cookie('auth_jwt', userToken, {
-                httpOnly: true,
-                secure: true,
-                // maxAge: 60 * 60 * 1000 * process.env.JWT_EXPIRATION
-            }).json({ verified_email: true, username, email });
+        } catch (err) {
+            console.error(err);
         }
 
-        return res.json({ verified_email: false });
+        return res.status(500).json({ msg: "could not verify email" });
     })
 
+    router.get("/logout", (req, res) => {
+        return res.status(200).clearCookie("auth_jwt").json({ msg: "logout successful" });
+    })
+
+    router.get("/pingCookie", (req, res) => {
+        console.log(req.cookies.auth_jwt)
+        return res.json({ msg: "server pinged" })
+    })
     return router;
 }

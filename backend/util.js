@@ -1,12 +1,20 @@
 import jwt from "jsonwebtoken";
 
 // TODO: add expiration
+
+const jwtExp = (hours) => {
+    return 60 * 60 * hours
+}
 const createJWT = (payload) => {
-    const userToken = jwt.sign(
+    const expiresIn = jwtExp(process.env.JWT_EXPIRATION)
+    const token = jwt.sign(
         payload,
-        process.env.JWT_SECRET, { algorithm: process.env.JWT_ALGO }
+        process.env.JWT_SECRET, {
+            algorithm: process.env.JWT_ALGO,
+            expiresIn: expiresIn
+        },
     );
-    return userToken;
+    return { token, expiresIn };
 }
 
 export { createJWT };

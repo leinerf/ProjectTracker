@@ -9,7 +9,8 @@ config();
 export default defineConfig({
     plugins: [react()],
     define: {
-        "ENV_CLIENT_ID": JSON.stringify(process.env.CLIENT_ID)
+        "ENV_CLIENT_ID": JSON.stringify(process.env.CLIENT_ID),
+        "BASE_URL": JSON.stringify(process.env.BASE_URL)
     },
     server: {
         proxy: {

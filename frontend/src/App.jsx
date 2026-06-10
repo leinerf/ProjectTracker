@@ -8,12 +8,12 @@ import Profile from './Profile';
 // Styling
 import './App.css';
 
+import { isAuthenticated } from '../util/auth.js';
+
 function  App() {
-  const username = localStorage.getItem("username");
-  const email = localStorage.getItem("user-email"); 
   return (  
     <div className="landing center-content">
-      {!username ? <Auth/> : <Profile username={username} email={email} />}  
+      {isAuthenticated() ? <Profile/>: <Auth/>}  
     </div>
   )
 }
