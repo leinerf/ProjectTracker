@@ -1,12 +1,14 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
 import axios from "axios";
 
+import { getClientAuth, setClientAuth } from "../util/auth.js";
 // TODO: ADD ability to edit username
-function Profile({username, email}) {
+function Profile() {
+    const {username, email } = getClientAuth();
     const [show, setShow] = useState(false);
     const [usrname, setUserName] = useState(username);
     const handleShow = () => setShow(true);
@@ -22,12 +24,9 @@ function Profile({username, email}) {
             newUsername: usrname, 
             oldUsername: username
         })
-        const resp = await axios.patch("/api/name", {
-            newUsername: usrname, 
-            oldUsername: username
-        })
+        const resp = await axios.put("/api/user", { username:usrname })
         if(resp.status === 200){
-            localStorage.setItem("username", resp.data.username)
+            setClientAuth({ username: resp.data.username })
             setUserName(resp.data.username)
         }
         console.log(resp.data);

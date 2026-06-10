@@ -6,21 +6,15 @@ import { createJWT } from '../util.js';
 export default (db) => {
     const router = express.Router();
 
-    router.get("/ping", (req, res) => {
-        console.log(req.auth);
-        return res.json({ msg: "cookie successful" })
-    })
-
-    router.patch("/name", async(req, res) => {
+    router.put("/user", async(req, res) => {
         try {
             const { id } = req.auth;
-            const { newUsername, oldUsername } = req.body;
-            console.log(newUsername, oldUsername)
+            const { username: newUsername } = req.body;
             const user = await db.User.findOne({ where: { id } })
-            user.set({ username: newUsername })
+            user.set({ username: newUsername || user.username })
             await user.save();
             return res.status(200).json({
-                msg: "username changed from " + oldUsername + " to " + newUsername,
+                msg: "username changed to " + newUsername,
                 username: newUsername
             })
         } catch (err) {

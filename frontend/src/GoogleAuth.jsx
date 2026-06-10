@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import Button from 'react-bootstrap/Button';
+import { setClientAuth } from "../util/auth";
 
-function GoogleAuth({redirectURL, authType}) {
+function GoogleAuth({redirectURL, authPath}) {
     const navigate = useNavigate();
     const verifyUser = async () => {
         const getAccessToken = () => {
@@ -24,25 +26,29 @@ function GoogleAuth({redirectURL, authType}) {
         if(token === ""){
             navigate(redirectURL);
         }
-
-        //TODO: verify in the backside
-        // const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
-        // const agent = new HttpsProxyAgent('http://localhost:3000');
-        const resp = await axios.post(`/auth/${authType}?access_token=${token}`);
-        console.log(resp.data);
-        if(resp.data.verified_email){
-            const { username, email } = resp.data;
-            //save to local storage and go forward
-            localStorage.setItem("username", username)
-            localStorage.setItem("authenticated", true);
-            localStorage.setItem("user-email", email)
-            navigate(redirectURL);
+        try{
+            const resp = await axios.get(`/auth/${authPath}?access_token=${token}`);
+            if(resp.status === 200){
+                const { username, email, jwt_exp } = resp.data;
+                if(username === undefined || email === undefined || jwt_exp === undefined){
+                    throw new Error("required info not recieved");
+                }
+                setClientAuth({username, email, jwt_exp})
+                navigate(redirectURL);
+            } else {
+                throw new Error("status code was not 200: " +  resp.status);
+            }
+        } catch(err){
+            console.error(err)
         }
     }
 
     verifyUser();
     return <div>
         <p>Authenticating User.... If page is stuck try authenticating again</p>
+        <Button variant="success" className="align-text" onClick={() => {navigate("/")}}>
+            Go Back
+        </Button>
     </div>
 }
 
