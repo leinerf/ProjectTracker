@@ -30,5 +30,5 @@ app.use("/auth", authRouter(db));
 app.use("/api", jwtWrapper(), apiRouter(db));
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`App listening on port ${port}`);
 });

@@ -20,17 +20,13 @@ function Profile() {
     const handleSubmit = async(event) => {
         event.preventDefault()
         handleClose();
-        console.log({
-            newUsername: usrname, 
-            oldUsername: username
-        })
         const resp = await axios.put("/api/user", { username:usrname })
         if(resp.status === 200){
             setClientAuth({ username: resp.data.username })
             setUserName(resp.data.username)
+        } else {
+            throw Error("status code was not 200: " + resp.status)
         }
-        console.log(resp.data);
-        
     }
     return <>
         <div>

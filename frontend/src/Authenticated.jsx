@@ -1,14 +1,18 @@
 import { Outlet, useNavigate } from "react-router";
 import { clearClientAuth, isAuthenticated } from "../util/auth";
 import axios from "axios";
+import { useEffect } from "react";
 
 function Authenticated() {
-    if(!isAuthenticated()) {
-        axios.get("/auth/logout");
-        clearClientAuth();
-        const navigate = useNavigate();
-        navigate("/")
-    }
+    const navigate = useNavigate();
+    useEffect(() => {
+        if(!isAuthenticated()) {
+            axios.get("/auth/logout");
+            clearClientAuth();
+            navigate("../")
+        }
+    }, []) 
+    
     return (
         <div>
             <Outlet />
