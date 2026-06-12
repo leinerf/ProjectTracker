@@ -17,11 +17,13 @@ function ProjectNav(){
             window.location.reload("/");
         }
     }
-
+    const brandHandler = () => {
+        navigate("/projects")
+    }
     return <>
-        <Navbar expand="lg" className="bg-body-tertiary">
+        <Navbar expand="lg" className="bg-body-tertiary" style={{marginBottom: "50px"}}>
             <Container>
-                <Navbar.Brand href="#home">Project</Navbar.Brand>
+                <Navbar.Brand onClick={brandHandler}>Project</Navbar.Brand>
                 <Navbar.Collapse className="justify-content-end">
                 <Nav>
                     <NavDropdown title="User" id="basic-nav-dropdown" >

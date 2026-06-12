@@ -1,16 +1,16 @@
 import { Sequelize, DataTypes, Deferrable } from "sequelize";
 import sequelize from "../db.js";
 import User from "./User.js";
-
+import Project from "./Project.js";
+/*
+ task, completed, hours spent, user ref, project ref, datetime for when user worked on it
+ */
 const Task = sequelize.define(
     'Task', {
         // Model attributes are defined here
-        name: {
+        detail: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        description: {
-            type: DataTypes.STRING,
         },
         id: {
             type: Sequelize.UUID,
@@ -34,12 +34,39 @@ const Task = sequelize.define(
             },
             allowNull: false
         },
-        completed: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        project_id: {
+            type: Sequelize.UUID,
+            references: {
+                // This is a reference to another model
+                model: Project,
+                // This is the column name of the referenced model
+                key: 'id',
+                // With PostgreSQL, it is optionally possible to declare when to check the foreign key constraint, passing the Deferrable type.
+                deferrable: Deferrable.INITIALLY_IMMEDIATE,
+                // Options:
+                // - `Deferrable.INITIALLY_IMMEDIATE` - Immediately check the foreign key constraints
+                // - `Deferrable.INITIALLY_DEFERRED` - Defer all foreign key constraint check to the end of a transaction
+                // - `Deferrable.NOT` - Don't defer the checks at all (default) - This won't allow you to dynamically change the rule in a transaction
+            },
+            allowNull: false
+        },
+        start: {
+            // date that you created and worked on tasks
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        finish: {
+            type: DataTypes.DATE,
+        },
+        milliseconds: {
+            // time spent on task in seconds
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         }
     }
 )
+
 
 //Only run if table doesn't exist 
 //await Task.sync();

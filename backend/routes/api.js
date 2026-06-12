@@ -23,75 +23,136 @@ export default (db) => {
         return res.status(500).json({ msg: "something went wrong" });
     })
 
-    router.get("/tasks", async(req, res) => {
+    router.get("/projects", async(req, res) => {
         try {
             const { id: userID } = req.auth;
-            const tasks = await db.Task.findAll({ where: { user_id: userID } });
-            const taskList = tasks.map(task => {
-                const { name, description, id, completed } = task.dataValues
+            const projects = await db.Project.findAll({ where: { user_id: userID } });
+            const projectList = projects.map(project => {
+                const { name, description, id, completed } = project.dataValues
                 return { name, description, id, completed }
             });
-            return res.status(200).json({ tasks: taskList });
+            return res.status(200).json({ projects: projectList });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
         }
     })
 
-    router.post("/task", async(req, res) => {
+    router.post("/project", async(req, res) => {
         try {
             const { id: userID } = req.auth;
             const { name, description } = req.body;
-            const task = await db.Task.create({ name, description, user_id: userID });
-            return res.status(200).json({ msg: "task added" });
+            const project = await db.Project.create({ name, description, user_id: userID });
+            return res.status(200).json({ msg: "project added" });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
         }
     })
 
-    router.get("/task/:id", async(req, res) => {
+    router.get("/project/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
-            const task = await db.Task.findOne({ where: { id, user_id: userID } });
-            return res.status(200).json({ msg: "task read", task: task.toJSON() });
+            const project = await db.Project.findOne({ where: { id, user_id: userID } });
+            return res.status(200).json({ msg: "project read", project: project.toJSON() });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
         }
     })
 
-    router.put("/task/:id", async(req, res) => {
+    router.put("/project/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
             const { name, description, completed } = req.body;
-            const task = await db.Task.findOne({ where: { id, user_id: userID } });
-            task.set({
-                name: name !== undefined ? name : task.name,
-                description: description !== undefined ? description : task.description,
-                completed: completed !== undefined ? completed : task.completed
+            const project = await db.Project.findOne({ where: { id, user_id: userID } });
+            project.set({
+                name: name !== undefined ? name : project.name,
+                description: description !== undefined ? description : project.description,
+                completed: completed !== undefined ? completed : project.completed
             })
-            await task.save();
-            return res.status(200).json({ msg: "task updated", task: task.toJSON() });
+            await project.save();
+            return res.status(200).json({ msg: "project updated", project: project.toJSON() });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
         }
     })
 
-    router.delete("/task/:id", async(req, res) => {
+    router.delete("/project/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
-            const task = await db.Task.findOne({ where: { id, user_id: userID } });
-            await task.destroy();
-            return res.status(200).json({ msg: "task deleted" });
+            const project = await db.Project.findOne({ where: { id, user_id: userID } });
+            await project.destroy();
+            return res.status(200).json({ msg: "project deleted" });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
         }
     })
+
+    router.get("/project/:projectId/tasks", async(req, res) => {
+        try {
+            const { projectId: project_id } = req.params;
+            const { id: user_id } = req.auth;
+            const tasks = await db.Task.findAll({ where: { project_id, user_id } });
+            const taskList = tasks.map(task => {
+                const { detail, id, done, start, milliseconds, finish } = task.dataValues
+                return { detail, id, done, start, milliseconds, finish }
+            });
+            return res.status(200).json({ tasks: taskList });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ err });
+        }
+    })
+
+    router.post("/project/:projectId/task", async(req, res) => {
+        try {
+            const { detail, start } = req.body;
+            const { projectId: project_id } = req.params;
+            const { id: user_id } = req.auth;
+            const task = await db.Task.create({
+                detail,
+                start,
+                project_id,
+                user_id
+            })
+            return res.status(200).json({
+                msg: "successfully created",
+                task: task.toJSON()
+            })
+        } catch (err) {
+            console.error(err);
+        }
+        return res.status(500).json({ msg: "could not create task because of internal issues" })
+    })
+
+    router.put("/project/:projectId/task/:taskId", async(req, res) => {
+        try {
+            const { detail, start, finish, milliseconds } = req.body;
+            const { projectId: project_id, taskId: id } = req.params;
+            const { id: user_id } = req.auth;
+            const task = await db.Task.findOne({ where: { project_id, user_id, id } })
+            task.set({
+                detail: detail !== undefined ? detail : task.detail,
+                start: start !== undefined ? start : task.start,
+                finish: finish !== undefined ? finish : task.finish,
+                milliseconds: milliseconds !== undefined ? milliseconds : task.milliseconds
+            })
+            await task.save();
+            return res.status(200).json({
+                msg: "successfully updated",
+                task: task.toJSON()
+            })
+        } catch (err) {
+            console.error(err);
+        }
+        return res.status(500).json({ msg: "could not update task because of internal issues" })
+    })
+
     return router;
 }

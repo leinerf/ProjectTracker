@@ -1,8 +1,8 @@
 import React from 'react';
 import axios from 'axios'
 //Components
-import Auth from './Auth';
-import Profile from './Profile';
+import Auth from './Auth.jsx';
+import Profile from './Profile.jsx';
 
 
 // Styling
@@ -10,12 +10,12 @@ import './App.css';
 
 import { isAuthenticated } from '../util/auth.js';
 
-function  App() {
-  return (  
+function  Home() {
+  return (
     <div className="landing center-content">
       {isAuthenticated() ? <Profile/>: <Auth/>}  
     </div>
   )
 }
 
-export default App;
+export default Home;
