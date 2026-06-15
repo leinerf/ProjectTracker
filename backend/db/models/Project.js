@@ -1,6 +1,7 @@
 import { Sequelize, DataTypes, Deferrable } from "sequelize";
 import sequelize from "../db.js";
 import User from "./User.js";
+import { isNotEmptyString } from "../validators/index.js";
 
 const Project = sequelize.define(
     'Project', {
@@ -8,6 +9,9 @@ const Project = sequelize.define(
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                isNotEmptyString
+            }
         },
         description: {
             type: DataTypes.STRING,

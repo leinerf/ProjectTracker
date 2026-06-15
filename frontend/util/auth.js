@@ -15,7 +15,8 @@ const signInGoogleAuth = (redirectPath) => {
         'response_type': 'token',
         'scope': 'https://www.googleapis.com/auth/userinfo.email',
         'include_granted_scopes': 'true',
-        'state': 'pass-through value'
+        'state': 'pass-through value',
+        'prompt': 'select_account'
     };
 
     // Add form parameters as hidden input values.

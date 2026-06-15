@@ -2,15 +2,17 @@ import { Sequelize, DataTypes, Deferrable } from "sequelize";
 import sequelize from "../db.js";
 import User from "./User.js";
 import Project from "./Project.js";
-/*
- task, completed, hours spent, user ref, project ref, datetime for when user worked on it
- */
+import { isNotEmptyString } from "../validators/index.js";
+
 const Task = sequelize.define(
     'Task', {
         // Model attributes are defined here
         detail: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                isNotEmptyString
+            }
         },
         id: {
             type: Sequelize.UUID,

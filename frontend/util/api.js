@@ -46,7 +46,7 @@ const deleteProject = async({ id }) => {
     return resp.status
 }
 
-const pullTasks = async(projectId) => {
+const getTasks = async(projectId) => {
     try {
         const resp = await axios.get("/api/project/" + projectId + "/tasks")
         if (resp.status !== 200) {
@@ -77,13 +77,19 @@ const updateTask = async(projectId, taskId, { detail, start, milliseconds, finis
     return resp.status
 }
 
+const deleteTask = async(projectId, taskId) => {
+    const resp = await axios.delete("/api/project/" + projectId + "/task/" + taskId);
+    return resp.status
+}
+
 export {
     pullProjects,
     getProject,
     addProject,
     updateProject,
     deleteProject,
-    pullTasks,
+    getTasks,
     addTask,
-    updateTask
+    updateTask,
+    deleteTask
 }

@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-
 import axios from "axios";
 
 import { getClientAuth, setClientAuth } from "../util/auth.js";
-// TODO: ADD ability to edit username
+
 function Profile() {
     const {username, email } = getClientAuth();
     const [show, setShow] = useState(false);

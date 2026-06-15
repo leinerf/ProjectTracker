@@ -18,15 +18,13 @@ function StopWatch({task, editTask}){
         return () => clearInterval(intervalRef);
     }, [running, time])
 
-    // format this better
-
-
     const pauseHandler = async () => {
         if(running){
             editTask({...task, milliseconds: time})
         }    
         setRunning(!running)
     }
+    
     const doneHandler = () => {
         setRunning(false)
         editTask({...task, milliseconds: time, finish: new Date()})
