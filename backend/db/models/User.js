@@ -1,21 +1,30 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../db.js";
-
+import { isNotEmptyString } from "../validators/index.js";
 const User = sequelize.define(
     'User', {
         // Model attributes are defined here
         username: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                isNotEmptyString
+            }
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: true,
+            validate: {
+                isNotEmptyString
+            }
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                isNotEmptyString
+            }
         },
         id: {
             type: Sequelize.UUID,

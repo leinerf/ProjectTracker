@@ -1,7 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { createJWT } from '../util.js';
+import { createJWT } from '../util/index.js';
 
 export default (db) => {
     const router = express.Router();
@@ -35,6 +35,10 @@ export default (db) => {
         try {
             const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
             if (resp.data.verified_email) {
+                const existingUser = await db.User.findOne({ where: { email: resp.data.email } })
+                if (existingUser) {
+                    throw new Error("this user already exists")
+                }
                 const { email, verified_email } = resp.data;
                 const username = email.substring(0, email.indexOf("@"));
                 const user = await db.User.create({
