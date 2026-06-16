@@ -1,6 +1,3 @@
-import React from 'react';
-import axios from 'axios'
-//Components
 import Auth from './Auth.jsx';
 import Profile from './Profile.jsx';
 

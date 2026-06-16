@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Button from "react-bootstrap/Button";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect } from "react";
 import Stack from "react-bootstrap/Stack";
 import { hourMinSecondsMilli, formatDigit } from "../util";
 
 function StopWatch({task, editTask, active, setActive}){
     const [time, setTime] = useState(task.milliseconds);   
-    const [delay, setDelay] = useState(false);
     const [intervalRef, setIntervalRef] = useState(undefined);
 
     useEffect(() =>{
@@ -29,7 +28,6 @@ function StopWatch({task, editTask, active, setActive}){
     }
     
     const doneHandler = () => {
-        setRunning(false)
         editTask({...task, milliseconds: time, finish: new Date()})
     }
 
