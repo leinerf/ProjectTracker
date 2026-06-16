@@ -11,6 +11,9 @@ export default (db) => {
             const resp = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + token);
             if (resp.data.verified_email) {
                 const user = await db.User.findOne({ where: { email: resp.data.email } })
+                if (user === null) {
+                    throw new Error("user is not in database");
+                }
                 if (user) {
                     const { username, email, id } = user.toJSON();
                     const { token: userToken, expiresIn } = createJWT({ id });

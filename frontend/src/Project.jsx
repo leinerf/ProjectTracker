@@ -10,13 +10,13 @@ import { hourMinSecondsMilli, formatDigit } from "../util";
 
 function Project({projectId}) {
     const [number, setNumber] = useState(0);
-    const [project, setProject] = useState({})
+    const [project, setProject] = useState({});
     const [tasks, setTasks] = useState([]);
     const [activeTasks, setActiveTasks] = useState([]);
-    const [finishedTasks, setFinishedTasks] = useState([])
-    const [task, setTask] = useState({detail: ""})
+    const [finishedTasks, setFinishedTasks] = useState([]);
+    const [task, setTask] = useState({detail: ""});
+    const [active, setActive] = useState(null)
     const [show, setShow] = useState(false);
-
     const params = useParams()
     const {projectId: id } = params
     
@@ -89,7 +89,7 @@ function Project({projectId}) {
                         </Stack>
                     </div>
                     <div>
-                        <StopWatch task={task} editTask={editTask}/>
+                        <StopWatch task={task} editTask={editTask} active={active} setActive={setActive}/>
                     </div>
                 </div>
             )
