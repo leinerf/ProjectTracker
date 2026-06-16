@@ -40,7 +40,7 @@ function Profile() {
             <Modal show={show} onHide={handleClose}>
                 <Form>
                     <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Update Information</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -52,7 +52,7 @@ function Profile() {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button type="submit" variant="primary" onClick={handleSubmit}>
+                    <Button type="submit" variant="dark" onClick={handleSubmit}>
                         Save Changes
                     </Button>
                     </Modal.Footer>
@@ -67,6 +67,7 @@ function Profile() {
                 </svg>
                 , lets get started on tracking your projects</h1>
             <p className="description">We have your email as {email}.</p>
+            {/* <TODO: get total hours spent on projects */}
             <p className="description">You worked on your project for <span className="bold-text">2 hours 45 minutes 30 seconds</span> today.</p>
             <Button variant="dark" onClick={goToProjects}>
                 Go to Projects
