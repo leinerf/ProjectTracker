@@ -5,48 +5,51 @@ body {
     height: 100vh;
 }
 
-.landing {
-    width: 100%;
+#landing-page {
     height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.md-container {
+    width: 80%;
+    min-width: 400px;
+    height: 80%;
+    min-height: 400px;
 }
 
 .center-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100%;
 }
 
-#auth-card {
-    min-width: 350px;
-    min-height: 200px;
-    padding: 10px;
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
 }
 
-.align-text {
+.align-icon {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 }
 
-.align-text>svg {
-    margin-right: 3px;
+.content {
+    height: 80%;
+    width: 80%;
 }
 
-.stopwatch {
-    padding: 5px;
-    border: solid;
-    border-radius: 5px;
-    border-color: black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center
+.description {
+    width: 60%;
+    min-width: 300px;
+    font-size: 1.2em;
 }
 
-.stopwatch>span {
-    font-size: 1em;
+.header {
+    font-size: 3em;
 }

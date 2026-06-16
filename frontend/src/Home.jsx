@@ -1,17 +1,13 @@
 import Auth from './Auth.jsx';
 import Profile from './Profile.jsx';
-
-
-// Styling
-import './App.css';
-
 import { isAuthenticated } from '../util/auth.js';
+import './Home.css';
 
 function  Home() {
   return (
-    <div className="landing center-content">
-      {isAuthenticated() ? <Profile/>: <Auth/>}  
-    </div>
+      <div className="content center-content">
+        {isAuthenticated() ? <Profile/>: <Auth/>}
+      </div>
   )
 }
 
