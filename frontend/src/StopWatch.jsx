@@ -3,26 +3,29 @@ import Button from "react-bootstrap/Button";
 import Stack from "react-bootstrap/Stack";
 import { hourMinSecondsMilli, formatDigit } from "../util";
 
-function StopWatch({task, editTask}){
-    const [time, setTime] = useState(task.milliseconds);
-    const [running, setRunning] = useState(false);    
+function StopWatch({task, editTask, active, setActive}){
+    const [time, setTime] = useState(task.milliseconds);   
     const [delay, setDelay] = useState(false);
     const [intervalRef, setIntervalRef] = useState(undefined);
+
     useEffect(() =>{
-        if(running){
+        if(active === task.id){
             setIntervalRef(setInterval(() => {
                 setTime(time + 1)//adds 10 milliseconds every 10milliseconds 
             }, 1))
+        } else {
+            editTask({...task, milliseconds: time})
         }
 
         return () => clearInterval(intervalRef);
-    }, [running, time])
+    }, [time, active])
 
     const pauseHandler = async () => {
-        if(running){
-            editTask({...task, milliseconds: time})
-        }    
-        setRunning(!running)
+        if(active === task.id){
+            setActive(null)
+        } else {
+            setActive(task.id)
+        }
     }
     
     const doneHandler = () => {
@@ -37,7 +40,7 @@ function StopWatch({task, editTask}){
             <div><span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span></div>
             <div>
                 <Stack direction="horizontal">
-                    <button onClick={pauseHandler}>{!running ? "start" : "pause"}</button>
+                    <button onClick={pauseHandler}>{active === task.id ? "pause" : "start"}</button>
                     <button  onClick={doneHandler}>Done</button>
                 </Stack>
             </div>
