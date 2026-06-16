@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -13,7 +13,7 @@ function Profile() {
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
     const onUsrnameChange = (event) => {
-        const {name, value} = event.target
+        const { value } = event.target
         setUserName(value)
     }
     const handleSubmit = async(event) => {

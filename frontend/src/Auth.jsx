@@ -1,7 +1,3 @@
-import React from 'react';
-import axios from 'axios';
-
-//styling
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Stack from 'react-bootstrap/Stack';

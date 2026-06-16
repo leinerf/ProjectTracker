@@ -1,15 +1,15 @@
-import React, {useState, useEffect } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from 'react';
 import Button from "react-bootstrap/Button";
-import Stack from 'react-bootstrap/Stack';
-import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import Stack from 'react-bootstrap/Stack';
+import {  useParams } from 'react-router';
+import { formatDigit, hourMinSecondsMilli } from "../util";
+import { addTask, deleteTask, getProject, getTasks, updateTask } from '../util/api';
 import StopWatch from './StopWatch';
-import { useLocation, useParams } from 'react-router';
-import { addTask, updateTask, deleteTask, getProject, getTasks } from '../util/api';
-import { hourMinSecondsMilli, formatDigit } from "../util";
 
-function Project({projectId}) {
-    const [number, setNumber] = useState(0);
+function Project() {
     const [project, setProject] = useState({});
     const [tasks, setTasks] = useState([]);
     const [activeTasks, setActiveTasks] = useState([]);

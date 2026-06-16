@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Alert from 'react-bootstrap/Alert';
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { pullProjects, addProject, updateProject, deleteProject } from "../util/api.js"
 
 function ProjectModel({project, setProject, show, setShow, submitHandler}) {
@@ -15,6 +14,7 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
     
     useEffect(() => {
         if(show){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setValid({
                 name: project.name.length !== 0 ? true : false,
                 description: project.description.length !== 0 ? true: false
@@ -92,7 +92,7 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
     </>
 }
 
-function projects(){
+function Projects(){
     let navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     
@@ -127,6 +127,7 @@ function projects(){
 
     useEffect(
         () => {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             getProjects();
         }, []
     )
@@ -222,4 +223,4 @@ function projects(){
     </>
 }
 
-export default projects;
+export default Projects;

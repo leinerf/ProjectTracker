@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const signInGoogleAuth = (redirectPath) => {
     let oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -10,7 +8,9 @@ const signInGoogleAuth = (redirectPath) => {
 
     // Parameters to pass to OAuth 2.0 endpoint.
     let params = {
+        // eslint-disable-next-line no-undef
         'client_id': ENV_CLIENT_ID,
+        // eslint-disable-next-line no-undef
         'redirect_uri': BASE_URL + "/" + redirectPath,
         'response_type': 'token',
         'scope': 'https://www.googleapis.com/auth/userinfo.email',
@@ -36,7 +36,7 @@ const signInGoogleAuth = (redirectPath) => {
 const setClientAuth = ({ username, email, jwt_exp }) => {
     const { username: oldUsername, email: oldEmail, jwt_exp: oldJwt_exp } = localStorage;
     localStorage.setItem("username", username || oldUsername);
-    localStorage.setItem("email", email || oldUsername);
+    localStorage.setItem("email", email || oldEmail);
     localStorage.setItem("jwt_exp", jwt_exp || oldJwt_exp);
 }
 
