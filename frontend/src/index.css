@@ -5,6 +5,17 @@ body {
     height: 100vh;
 }
 
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding: 0;
+}
+
 #landing-page {
     height: 100vh;
     width: 100%;
@@ -78,8 +89,13 @@ body {
 
 .btn-circle {
     border-radius: 100px;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
+}
+
+button.btn-circle>svg {
+    width: 25px;
+    height: 25px;
 }
 
 .hover-pointer {

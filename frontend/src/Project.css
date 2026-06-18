@@ -1,0 +1,47 @@
+.btn-circle-sm {
+    border-radius: 100px;
+    width: 30px;
+    height: 30px;
+}
+
+.btn-circle-sm>svg {
+    width: 10px;
+    height: 10px;
+}
+
+@media (max-width: 576px) {
+    h1.header {
+        font-size: 2em;
+    }
+    button.btn-circle {
+        width: 30px;
+        height: 30px;
+    }
+    button.btn-circle>svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+
+/* // Medium devices (tablets, 768px and up) */
+
+@media (max-width: 768px) {
+    h1.header {
+        font-size: 2em;
+    }
+}
+
+
+/* // Large devices (desktops, 992px and up)
+@media (min-width: 992px) {}
+
+
+// X-Large devices (large desktops, 1200px and up)
+
+@media (min-width: 1200px) {}
+
+
+// XX-Large devices (larger desktops, 1400px and up) 
+
+@media (min-width: 1400px) {} */

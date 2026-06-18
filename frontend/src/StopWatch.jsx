@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import Stack from "react-bootstrap/Stack";
 import { hourMinSecondsMilli, formatDigit } from "../util";
+import "./StopWatch.css";
+import Button from "react-bootstrap/Button";
 
 function StopWatch({task, editTask, active, setActive}){
     const [time, setTime] = useState(task.milliseconds);   
@@ -34,12 +36,16 @@ function StopWatch({task, editTask, active, setActive}){
     const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
 
     return <>
-        <div className ="stopwatch">
-            <div><span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span></div>
+        <div className="stopwatch row-container align-items-center">
+            <div className="stopwatch-time">
+                <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+            </div>
             <div>
-                <Stack direction="horizontal">
-                    <button onClick={pauseHandler}>{active === task.id ? "pause" : "start"}</button>
-                    <button  onClick={doneHandler}>Done</button>
+                <Stack direction="horizontal" gap={2}>
+                    <Button variant="outline-dark" onClick={pauseHandler}>
+                        {active === task.id ? "Stop" : "Start"}
+                    </Button>
+                    <Button variant="outline-dark" onClick={doneHandler}>End</Button>
                 </Stack>
             </div>
         </div>

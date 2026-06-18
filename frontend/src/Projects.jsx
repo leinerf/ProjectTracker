@@ -1,118 +1,11 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
 import Stack from 'react-bootstrap/Stack';
-import Alert from 'react-bootstrap/Alert';
 import { useNavigate } from "react-router";
 import { pullProjects, addProject, updateProject, deleteProject } from "../util/api.js"
-
-function ProjectModel({project, setProject, show, setShow, submitHandler}) {
-    const [valid, setValid] = useState({})
-    const [showErrors, setShowErrors] = useState(false)
-    
-    useEffect(() => {
-        if(show){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setValid({
-                name: project.name.length !== 0 ? true : false,
-                description: project.description.length !== 0 ? true: false
-            })
-        }
-    }, [show])
-
-    const handleClose = () => {
-        setShowErrors(false);
-        setShow(false);
-    };
-    const editProject = (event) => {
-        const {name, value} = event.target
-        setProject({...project, [name]: value});
-        setValid({...valid,[name]: value.length !== 0 })
-    }
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        if(Object.values(valid).includes(false)){
-            setShowErrors(true);
-        } else {            
-            submitHandler();
-            setProject({name: "", description: ""})
-            setShow(false)
-            setShowErrors(false);
-        }
-        
-    }
-
-    const inputErrors = () => {
-        const errors = []
-        Object.keys(valid).forEach((inputName, index) => {
-            if(valid[inputName]){
-                return
-            }
-            errors.push(<Alert key={index} variant="danger">
-                {inputName} is an empty string
-            </Alert>)
-        })
-        return errors
-    }
-    
-    return <>
-        <Modal show={show} onHide={handleClose}>
-            { showErrors ? inputErrors() : null }    
-            <Form>
-                <Modal.Header closeButton>
-                <Modal.Title>New Project</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                        <Form.Group className="mb-3" >
-                            <Form.Label>Project</Form.Label>
-                            <Form.Control type="text" placeholder="type the name of the project you want to work on"  name={"name"} value={project.name} onChange={editProject} required={true} />
-                            <Form.Control.Feedback type="invalid">
-                                Please choose a username.
-                            </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group className="mb-3" >
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control as="textarea" rows={3} placeholder="type a description of the project you want to work on" name={"description"} value={project.description} onChange={editProject} required={true}/>
-                        </Form.Group>
-                    
-                    
-                </Modal.Body>
-                <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
-                <Button type="submit" variant="dark" onClick={handleSubmit}>
-                    Save Changes
-                </Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
-    </>
-}
-
- function InfoModal({project, show, setShow}) {
-    
-    const handleClose = () => {
-        setShow(false);
-    };
-
-    return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header >
-                <Modal.Title>{project.name}</Modal.Title>
-            </Modal.Header>
-
-            <Modal.Body>
-                <p>{project.description}</p>
-            </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Close</Button>
-            </Modal.Footer>
-        </Modal>
-    );
-}
+import ProjectModel from "./ProjectModel.jsx";
+import InfoModal from "./InfoModal.jsx";
+import "./Projects.css"
 
 function Projects(){
     let navigate = useNavigate();
@@ -197,9 +90,9 @@ function Projects(){
         <div>
             <h1 className="header row-container  align-items-center">
                 <span>Projects</span>
-                <Button variant="dark" className="btn-circle" onClick={() => setShowAdd(true)}>
+                <Button variant="dark" className="btn-circle d-flex flex-column align-items-center justify-content-center" onClick={() => setShowAdd(true)}>
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                        <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
                     </svg>
                 </Button>
             </h1>    
@@ -208,7 +101,7 @@ function Projects(){
                 {projects.map(
                     project => {
                         return <div key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
-                            <div className="d-flex flex-row justify-content-between flex-wrap">
+                            <div className="project-entry">
                                 <div>
                                     <h4>{project.name} </h4>
                                     <p>{project.description.substring(0,100)}{project.description.length > 100 ? '...' : ''}</p>
@@ -216,7 +109,7 @@ function Projects(){
                                 <div>
                                     <Stack direction="horizontal" gap={2}>
                                         <Button variant="dark" className="align-icon" onClick={() => showInfoModel(project)} >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-lg" viewBox="0 0 16 16">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-lg" viewBox="0 0 16 16">
                                                 <path d="m9.708 6.075-3.024.379-.108.502.595.108c.387.093.464.232.38.619l-.975 4.577c-.255 1.183.14 1.74 1.067 1.74.72 0 1.554-.332 1.933-.789l.116-.549c-.263.232-.65.325-.905.325-.363 0-.494-.255-.402-.704zm.091-2.755a1.32 1.32 0 1 1-2.64 0 1.32 1.32 0 0 1 2.64 0"/>
                                             </svg>
                                         </Button>
@@ -247,13 +140,9 @@ function Projects(){
                             <hr />
                         </div>
                     }
-                )}
-                        
+                )}          
             </div>
         </div>
-        
-        
-            
     </>
 }
 

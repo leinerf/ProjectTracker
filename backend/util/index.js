@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken";
 
-// TODO: add expiration
-
 const jwtExp = (hours) => {
     return 60 * 60 * hours
 }

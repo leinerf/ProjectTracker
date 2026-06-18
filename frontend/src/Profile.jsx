@@ -67,7 +67,7 @@ function Profile() {
                 </svg>
                 , lets get started on tracking your projects</h1>
             <p className="description">We have your email as {email}.</p>
-            {/* <TODO: get total hours spent on projects */}
+            {/* <TODO: get total hours spent on projects> */}
             <p className="description">You worked on your project for <span className="bold-text">2 hours 45 minutes 30 seconds</span> today.</p>
             <Button variant="dark" onClick={goToProjects}>
                 Go to Projects

@@ -30,7 +30,7 @@ function ProjectNav(){
     return <>
         <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary" id="project-nav">
             <Container>
-                <Navbar.Brand onClick={brandHandler} className="hover-pointer">Project</Navbar.Brand>
+                <Navbar.Brand onClick={brandHandler} className="hover-pointer">Projects</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 {isAuthenticated() && 
                     <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end"> 
