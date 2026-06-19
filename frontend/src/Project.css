@@ -1,12 +1,5 @@
-.btn-circle-sm {
-    border-radius: 100px;
-    width: 30px;
-    height: 30px;
-}
-
-.btn-circle-sm>svg {
-    width: 10px;
-    height: 10px;
+.start-date-header {
+    font-size: 2em;
 }
 
 @media (max-width: 576px) {
@@ -20,6 +13,9 @@
     button.btn-circle>svg {
         width: 16px;
         height: 16px;
+    }
+    .btn-container {
+        width: 200px;
     }
 }
 

@@ -22,8 +22,6 @@ const pullProjects = async() => {
             }
             return 0
         }
-        console.log(resp.data.projects.sort(compareProjectName).sort(compareProjectCompleted));
-
         return resp.data.projects.sort(compareProjectName).sort(compareProjectCompleted);
     } catch (err) {
         console.error(err);
@@ -57,20 +55,25 @@ const deleteProject = async({ id }) => {
 }
 
 const getTasks = async(projectId) => {
+    // gets tasks and sorts them by date
     try {
         const resp = await axios.get("/api/project/" + projectId + "/tasks")
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
-        const compareTasks = (a, b) => {
-            if (a.detail < b.detail) {
+
+        const compareTasksDate = (a, b) => {
+            const aStart = new Date(a.start)
+            const bStart = new Date(b.start)
+
+            if (aStart > bStart) {
                 return -1
-            } else if (a.detail > b.detail) {
+            } else if (aStart < bStart) {
                 return 1
             }
             return 0
         }
-        return resp.data.tasks.sort(compareTasks);
+        return resp.data.tasks.sort(compareTasksDate);
     } catch (err) {
         console.error(err);
         return undefined;

@@ -36,7 +36,7 @@ function StopWatch({task, editTask, active, setActive}){
     const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
 
     return <>
-        <div className="stopwatch row-container align-items-center">
+        <div className="stopwatch row-container align-items-center gap-2">
             <div className="stopwatch-time">
                 <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
             </div>

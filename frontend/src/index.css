@@ -75,6 +75,10 @@ h6 {
     border: 3px solid black;
 }
 
+.md-hr {
+    border: 2px solid black;
+}
+
 .long-hr {
     width: 100%;
 }
@@ -100,4 +104,28 @@ button.btn-circle>svg {
 
 .hover-pointer {
     cursor: pointer;
+}
+
+.btn-container {
+    width: 400px;
+}
+
+.task-detail {
+    font-size: 1.5em;
+    min-width: 300px;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.btn-circle-sm {
+    border-radius: 100px;
+    width: 30px;
+    height: 30px;
+}
+
+.btn-circle-sm>svg {
+    width: 10px;
+    height: 10px;
 }

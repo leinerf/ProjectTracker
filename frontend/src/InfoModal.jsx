@@ -11,11 +11,10 @@ function InfoModal({project, show, setShow}) {
             <Modal.Header >
                 <Modal.Title>{project.name}</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
-                <p>{project.description}</p>
+                <p className='mb-3'>{project.description}</p>
+                <p>Total Time Spent: <span className="fw-bold">10:40:30:20</span></p>
             </Modal.Body>
-
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Close</Button>
             </Modal.Footer>

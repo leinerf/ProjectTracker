@@ -11,6 +11,7 @@ import StopWatch from './StopWatch';
 import InfoModal from './InfoModal';
 
 import './Project.css'
+import './StopWatch.css'
 
 const TaskInfoModel = ({task, handleClose, show}) => {
     const {hour, min, sec, milliseconds: milli} = hourMinSecondsMilli(task.milliseconds)
@@ -21,9 +22,9 @@ const TaskInfoModel = ({task, handleClose, show}) => {
             </Modal.Header>
             <Modal.Body>
                 <ul>
-                    <li>Start time: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
-                    <li>Finish time: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li>
-                    <li>Total time: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milli).substring(0,2)}`}</li>
+                    <li>Start Datetime: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
+                    {task.finish ? <li>Finish Datetime: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li> : null }
+                    <li>Total Time Spent: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milli).substring(0,2)}`}</li>
                 </ul>
             </Modal.Body>
             <Modal.Footer>
@@ -109,27 +110,29 @@ function Project() {
     const activeTasksList = () => {
         return activeTasks.map(task => {
             return (
-                <div key={task.id} className="active-task-entry d-flex flex-row justify-content-between align-items-center mb-3">
-                    <div>
-                        {task.detail}
-                    </div>
-                    <div>
-                        <Stack direction="horizontal" gap={2}>
-                            <Button variant="outline-dark" onClick={() => showTaskModel(task)}>Info</Button>
+                <div key={task.id} className='task-container'>
+                    <div  className="active-task-entry d-flex flex-row justify-content-between align-items-center mb-3 flex-wrap">
+                        <div className="task-detail">
+                            {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                        </div>
+                        <div className="d-flex flex-row flex-wrap gap-2 btn-container">
+                            <Stack direction="horizontal" gap={2}> 
+                                <Button variant="outline-dark" onClick={() => showTaskModel(task)}>Info</Button>
+                                <Button variant="outline-dark" onClick={() => removeTask(task)}>Delete</Button>
+                            </Stack>
                             <StopWatch task={task} editTask={editTask} active={active} setActive={setActive}/>
-                            <Button variant="outline-dark" onClick={() => removeTask(task)}>Delete</Button>
-                        </Stack>
-                    </div>  
+                        </div>  
+                    </div>
+                    <hr />
                 </div>
             )
         })
     }
 
     const bucketTasksByDate = () => {
-        const tasks = finishedTasks.sort((a, b) => new Date(a.start) - new Date(b.start))
         let oldDate;
         const bucket = {}
-        tasks.forEach(task => {
+        finishedTasks.forEach(task => {
             const newDate = new Date(task.start).toDateString();
             if(oldDate === undefined || oldDate !== newDate){
                 oldDate = newDate;
@@ -137,7 +140,7 @@ function Project() {
             }
             bucket[oldDate].push(task)
         })
-        const sortedKeys = Object.keys(bucket).sort((a, b) => new Date(a) - new Date(b));
+        const sortedKeys = Object.keys(bucket)
         return { sortedKeys, bucket }
     }
 
@@ -146,30 +149,27 @@ function Project() {
         return sortedKeys.map((key,index)  => {
             const tasks = bucket[key];
             return <div key={index}>
-                <h1>{key}</h1>
-                <ul>
-                    {tasks.map((task,jndex) => {
-                        const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
-                        return (
-                            <li key={`${index}-${jndex}`}>
-                                    <h3>{task.detail}</h3>
-                                    <ul>
-                                        <li>Start time: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
-                                        <li>finish time: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li>
-                                        <li>time: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milliseconds).substring(0,2)}`}</li>
-                                        <li>
-                                            <Button variant="danger" onClick={() => removeTask(task)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
-                                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
-                                                </svg>
-                                            </Button>
-                                        </li>
-                                    </ul>
-                            </li>
-                        )
-                    })}
-                </ul>
+                <h1 className="start-date-header">{key}</h1>
+                <hr/>
+                {tasks.map((task) => {
+                    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
+                    return (
+                        <div key={task.id} className='task-container'>
+                            <div  className="active-task-entry d-flex flex-row justify-content-between align-items-center mb-3 flex-wrap">
+                                <div className="task-detail">
+                                    {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                                </div>
+                                <div className="d-flex flex-row flex-wrap gap-2">
+                                    <Button variant="outline-dark" onClick={() => showTaskModel(task)}>Info</Button>
+                                    <div className="stopwatch-time">
+                                        <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+                                    </div>    
+                                </div>  
+                            </div>
+                            <hr />
+                        </div>
+                    )
+                })}
             </div>
         })
     }
@@ -182,7 +182,12 @@ function Project() {
         setShowInfo(true);
     }
     
+    const [taskType, setTaskType] = useState("inProgress")
+    const showTaskType = (taskType) => {
+        setTaskType(taskType);
+    }
     return <>
+    
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
@@ -198,41 +203,13 @@ function Project() {
             <Button variant="secondary" onClick={handleClose}>
                 Close
             </Button>
-            <Button variant="primary" onClick={handleSave}>
+            <Button variant="dark" onClick={handleSave}>
                 Save Changes
             </Button>
             </Modal.Footer>
         </Modal>
         <InfoModal project={projectInfo} show={showInfo} setShow={setShowInfo} />
         <TaskInfoModel task={taskInfo} show={showTaskInfo} handleClose={hideTaskModel}/>
-        {/* <div className="center-content">
-            <div className="d-flex flex-row align-items-center gap-3">
-                <h1>{project.name}</h1>
-                <Button variant="dark" className="align-icon" onClick={() => showInfoModel(project)} >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-info-lg" viewBox="0 0 16 16">
-                        <path d="m9.708 6.075-3.024.379-.108.502.595.108c.387.093.464.232.38.619l-.975 4.577c-.255 1.183.14 1.74 1.067 1.74.72 0 1.554-.332 1.933-.789l.116-.549c-.263.232-.65.325-.905.325-.363 0-.494-.255-.402-.704zm.091-2.755a1.32 1.32 0 1 1-2.64 0 1.32 1.32 0 0 1 2.64 0"/>
-                    </svg>
-                </Button>
-            </div>
-            <div>
-                <p>Total Hours Spent: <span>10:40:30:20</span></p>
-            </div>
-            <div>
-                <Button variant='primary' onClick={handleShow}>Create Task</Button>
-            </div>
-            <div>
-                <h1>Active Sessions</h1>
-                <div>
-                    {activeTasksList()}
-                </div>
-            </div>
-            <div>
-                <h1>Completed Sessions</h1>
-                <div>
-                    {createTaskListByDate()}
-                </div>
-            </div>
-        </div> */}
         <div>
             <div className="mb-3 row-container  align-items-center">
                 <h1 className="header"><span>{project.name}</span></h1>
@@ -250,15 +227,15 @@ function Project() {
             <div className="mb-3">
                 <p>Total Time Spent: <span className="fw-bold">10:40:30:20</span></p>
             </div>
-            
             <hr className="thick-hr long-hr"/>
             <div className="row-container">
-                <h1 style={{ textDecoration: "underline" }}>InProgress</h1>
-                <h1>Finished</h1>
+                <h1 onClick={() => {showTaskType("inProgress")}} style={taskType === "inProgress" ? {textDecoration: "underline"} : null} >InProgress</h1>
+                <h1 onClick={() => {showTaskType("finished")}} style={taskType === "finished" ? {textDecoration: "underline"} : null}>Finished</h1>
             </div>
             <div className="fixed-height">    
                 <div className="mt-3">
-                    {activeTasksList()}
+                    {taskType === "inProgress" ?  activeTasksList(): null}
+                    {taskType === "finished" ? createTaskListByDate() : null}
                 </div>
             </div>
         </div>
