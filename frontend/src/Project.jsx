@@ -9,6 +9,7 @@ import { formatDigit, hourMinSecondsMilli } from "../util";
 import { addTask, deleteTask, getProject, getTasks, updateTask } from '../util/api';
 import StopWatch from './StopWatch';
 import InfoModal from './InfoModal';
+import { getTimeSpentOnProject } from '../util/api';
 
 import './Project.css'
 import './StopWatch.css'
@@ -42,6 +43,7 @@ function Project() {
     const [task, setTask] = useState({detail: ""});
     const [active, setActive] = useState(null)
     const [show, setShow] = useState(false);
+    const [time, setTime] = useState(0);
     const params = useParams()
     const {projectId: id } = params
     
@@ -55,6 +57,10 @@ function Project() {
         setTasks(pulledTasks)
     }
 
+    const pullTimeSpent = async () => {
+        const pulledTime = await getTimeSpentOnProject(id);
+        setTime(pulledTime);
+    }
     useEffect(() => {
         pullProject(id)
     }, [])    
@@ -66,7 +72,9 @@ function Project() {
     useEffect( () => {
         setActiveTasks(tasks.filter((task) => task.finish === null))
         setFinishedTasks(tasks.filter((task) => task.finish !== null))
+        pullTimeSpent()
     }, [tasks])
+
 
     const handleClose = () => {
         setTask({...task, detail: ""})
@@ -186,8 +194,9 @@ function Project() {
     const showTaskType = (taskType) => {
         setTaskType(taskType);
     }
+
+    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
     return <>
-    
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
@@ -225,7 +234,7 @@ function Project() {
                 <Button variant="dark" className="align-icon " onClick={() => showInfoModel(project)}> Expand Description</Button>
             </div>
             <div className="mb-3">
-                <p>Total Time Spent: <span className="fw-bold">10:40:30:20</span></p>
+                <p>Total Time Spent: <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span></p>
             </div>
             <hr className="thick-hr long-hr"/>
             <div className="row-container">

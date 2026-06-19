@@ -1,11 +1,27 @@
+import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-
+import { getTimeSpentOnProject } from '../util/api';
+import { formatDigit, hourMinSecondsMilli } from '../util';
 function InfoModal({project, show, setShow}) {
     const handleClose = () => {
         setShow(false);
     };
 
+    const [time, setTime] = useState(0);
+
+    const pullTimeSpent = async () => {
+        const pulledTime = await getTimeSpentOnProject(project.id);
+        setTime(pulledTime);
+    }
+    useEffect(() => {
+        if(show){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            pullTimeSpent()
+        }
+    }, [show])
+
+    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header >
@@ -13,7 +29,8 @@ function InfoModal({project, show, setShow}) {
             </Modal.Header>
             <Modal.Body>
                 <p className='mb-3'>{project.description}</p>
-                <p>Total Time Spent: <span className="fw-bold">10:40:30:20</span></p>
+                <p>Total Time Spent: <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span></p>
+                <p className='text-muted'>(hour:min:seconds:milliseconds)</p>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Close</Button>

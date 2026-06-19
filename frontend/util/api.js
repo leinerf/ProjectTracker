@@ -95,6 +95,15 @@ const deleteTask = async(projectId, taskId) => {
     return resp.status
 }
 
+const getTimeSpentOnProject = async(projectId) => {
+    try {
+        const resp = await axios.get("/api/project/" + projectId + "/time");
+        return resp.data.milliseconds
+    } catch (err) {
+        console.error(err)
+        return null;
+    }
+}
 export {
     pullProjects,
     getProject,
@@ -104,5 +113,6 @@ export {
     getTasks,
     addTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    getTimeSpentOnProject
 }
