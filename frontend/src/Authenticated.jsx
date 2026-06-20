@@ -14,7 +14,7 @@ function Authenticated() {
     }, []) 
     
     return (
-        <div>
+        <div className="s-container">
             <Outlet />
         </div>
     );

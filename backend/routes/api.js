@@ -99,6 +99,20 @@ export default (db) => {
         }
     })
 
+    router.get("/project/:id/time", async(req, res) => {
+        const id = req.params.id
+        const { id: userID } = req.auth;
+        try {
+            const tasks = await db.Task.findAll({ where: { project_id: id, user_id: userID } })
+            let totalTime = 0;
+            tasks.forEach(task => totalTime += task.milliseconds)
+            return res.status(200).json({ msg: "total time", milliseconds: totalTime })
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ err })
+        }
+    })
+
     router.get("/project/:projectId/tasks", async(req, res) => {
         try {
             const { projectId: project_id } = req.params;

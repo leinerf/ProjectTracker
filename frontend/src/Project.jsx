@@ -8,6 +8,32 @@ import {  useParams } from 'react-router';
 import { formatDigit, hourMinSecondsMilli } from "../util";
 import { addTask, deleteTask, getProject, getTasks, updateTask } from '../util/api';
 import StopWatch from './StopWatch';
+import InfoModal from './InfoModal';
+import { getTimeSpentOnProject } from '../util/api';
+
+import './Project.css'
+import './StopWatch.css'
+
+const TaskInfoModel = ({task, handleClose, show}) => {
+    const {hour, min, sec, milliseconds: milli} = hourMinSecondsMilli(task.milliseconds)
+    return (
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header >
+                <Modal.Title>{task.detail}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <ul>
+                    <li>Start Datetime: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
+                    {task.finish ? <li>Finish Datetime: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li> : null }
+                    <li>Total Time Spent: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milli).substring(0,2)}`}</li>
+                </ul>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="dark" onClick={handleClose}>Close</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
 
 function Project() {
     const [project, setProject] = useState({});
@@ -17,6 +43,7 @@ function Project() {
     const [task, setTask] = useState({detail: ""});
     const [active, setActive] = useState(null)
     const [show, setShow] = useState(false);
+    const [time, setTime] = useState(0);
     const params = useParams()
     const {projectId: id } = params
     
@@ -30,6 +57,10 @@ function Project() {
         setTasks(pulledTasks)
     }
 
+    const pullTimeSpent = async () => {
+        const pulledTime = await getTimeSpentOnProject(id);
+        setTime(pulledTime);
+    }
     useEffect(() => {
         pullProject(id)
     }, [])    
@@ -41,7 +72,9 @@ function Project() {
     useEffect( () => {
         setActiveTasks(tasks.filter((task) => task.finish === null))
         setFinishedTasks(tasks.filter((task) => task.finish !== null))
+        pullTimeSpent()
     }, [tasks])
+
 
     const handleClose = () => {
         setTask({...task, detail: ""})
@@ -71,36 +104,43 @@ function Project() {
         await pullTasks(id)
     }
 
+    const [showTaskInfo, setShowTaskInfo] = useState(false);
+    const [taskInfo, setTaskInfo] = useState({})
+    const showTaskModel = ({detail, start, milliseconds, finish}) => {
+        setShowTaskInfo(true);
+        setTaskInfo({detail, start, milliseconds, finish});
+    }
+    const hideTaskModel = () => {
+        setShowTaskInfo(false);
+        setTaskInfo({})
+    }
+
     const activeTasksList = () => {
         return activeTasks.map(task => {
             return (
-                <div key={task.id}>
-                    <div>
-                        <Stack direction="horizontal" gap={3}>
-                            <div>
-                                {task.detail}
-                            </div>
-                            <Button variant="danger" onClick={() => removeTask(task)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
-                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
-                                </svg>
-                            </Button>
-                        </Stack>
+                <div key={task.id} className='task-container'>
+                    <div  className="active-task-entry d-flex flex-row justify-content-between align-items-center mb-3 flex-wrap">
+                        <div className="task-detail">
+                            {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                        </div>
+                        <div className="d-flex flex-row flex-wrap gap-2 btn-container">
+                            <Stack direction="horizontal" gap={2}> 
+                                <Button variant="outline-dark" onClick={() => showTaskModel(task)}>Info</Button>
+                                <Button variant="outline-dark" onClick={() => removeTask(task)}>Delete</Button>
+                            </Stack>
+                            <StopWatch task={task} editTask={editTask} active={active} setActive={setActive}/>
+                        </div>  
                     </div>
-                    <div>
-                        <StopWatch task={task} editTask={editTask} active={active} setActive={setActive}/>
-                    </div>
+                    <hr />
                 </div>
             )
         })
     }
 
     const bucketTasksByDate = () => {
-        const tasks = finishedTasks.sort((a, b) => new Date(a.start) - new Date(b.start))
         let oldDate;
         const bucket = {}
-        tasks.forEach(task => {
+        finishedTasks.forEach(task => {
             const newDate = new Date(task.start).toDateString();
             if(oldDate === undefined || oldDate !== newDate){
                 oldDate = newDate;
@@ -108,7 +148,7 @@ function Project() {
             }
             bucket[oldDate].push(task)
         })
-        const sortedKeys = Object.keys(bucket).sort((a, b) => new Date(a) - new Date(b));
+        const sortedKeys = Object.keys(bucket)
         return { sortedKeys, bucket }
     }
 
@@ -117,34 +157,45 @@ function Project() {
         return sortedKeys.map((key,index)  => {
             const tasks = bucket[key];
             return <div key={index}>
-                <h1>{key}</h1>
-                <ul>
-                    {tasks.map((task,jndex) => {
-                        const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
-                        return (
-                            <li key={`${index}-${jndex}`}>
-                                    <h3>{task.detail}</h3>
-                                    <ul>
-                                        <li>Start time: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
-                                        <li>finish time: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li>
-                                        <li>time: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milliseconds).substring(0,2)}`}</li>
-                                        <li>
-                                            <Button variant="danger" onClick={() => removeTask(task)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
-                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
-                                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
-                                                </svg>
-                                            </Button>
-                                        </li>
-                                    </ul>
-                            </li>
-                        )
-                    })}
-                </ul>
+                <h1 className="start-date-header">{key}</h1>
+                <hr/>
+                {tasks.map((task) => {
+                    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
+                    return (
+                        <div key={task.id} className='task-container'>
+                            <div  className="active-task-entry d-flex flex-row justify-content-between align-items-center mb-3 flex-wrap">
+                                <div className="task-detail">
+                                    {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                                </div>
+                                <div className="d-flex flex-row flex-wrap gap-2">
+                                    <Button variant="outline-dark" onClick={() => showTaskModel(task)}>Info</Button>
+                                    <div className="stopwatch-time">
+                                        <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+                                    </div>    
+                                </div>  
+                            </div>
+                            <hr />
+                        </div>
+                    )
+                })}
             </div>
         })
     }
 
+    const [showInfo, setShowInfo] = useState(false);
+    const [projectInfo, setProjectInfo] = useState({name: "", description: ""})
+
+    const showInfoModel = (project) => {
+        setProjectInfo(project);
+        setShowInfo(true);
+    }
+    
+    const [taskType, setTaskType] = useState("inProgress")
+    const showTaskType = (taskType) => {
+        setTaskType(taskType);
+    }
+
+    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
     return <>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -161,31 +212,39 @@ function Project() {
             <Button variant="secondary" onClick={handleClose}>
                 Close
             </Button>
-            <Button variant="primary" onClick={handleSave}>
+            <Button variant="dark" onClick={handleSave}>
                 Save Changes
             </Button>
             </Modal.Footer>
         </Modal>
-        <div className="center-content">
-            <div>
-                <h1>{project.name}</h1>
+        <InfoModal project={projectInfo} show={showInfo} setShow={setShowInfo} />
+        <TaskInfoModel task={taskInfo} show={showTaskInfo} handleClose={hideTaskModel}/>
+        <div>
+            <div className="mb-3 row-container  align-items-center">
+                <h1 className="header"><span>{project.name}</span></h1>
+                <Button variant="dark" className="btn-circle d-flex flex-column align-items-center justify-content-center" onClick={handleShow}>
+                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                    </svg>
+                </Button>
             </div>
-            <div>
-                <p>{project.description}</p>
+            
+            <div className="mb-3">
+                <p>Description: {project.description ? project.description.substring(0, 200) + (project.description.length > 100 ? '...' : '') : 'No description available'}</p>
+                <Button variant="dark" className="align-icon " onClick={() => showInfoModel(project)}> Expand Description</Button>
             </div>
-            <div>
-                <Button variant='primary' onClick={handleShow}>Create Task</Button>
+            <div className="mb-3">
+                <p>Total Time Spent: <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span></p>
             </div>
-            <div>
-                <h1>Active Sessions</h1>
-                <div>
-                    {activeTasksList()}
-                </div>
+            <hr className="thick-hr long-hr"/>
+            <div className="row-container">
+                <h1 onClick={() => {showTaskType("inProgress")}} style={taskType === "inProgress" ? {textDecoration: "underline"} : null} >InProgress</h1>
+                <h1 onClick={() => {showTaskType("finished")}} style={taskType === "finished" ? {textDecoration: "underline"} : null}>Finished</h1>
             </div>
-            <div>
-                <h1>Completed Sessions</h1>
-                <div>
-                    {createTaskListByDate()}
+            <div className="fixed-height">    
+                <div className="mt-3">
+                    {taskType === "inProgress" ?  activeTasksList(): null}
+                    {taskType === "finished" ? createTaskListByDate() : null}
                 </div>
             </div>
         </div>

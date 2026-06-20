@@ -6,7 +6,7 @@ const pullProjects = async() => {
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
-        const compareProjects = (a, b) => {
+        const compareProjectName = (a, b) => {
             if (a.name < b.name) {
                 return -1
             } else if (a.name > b.name) {
@@ -14,7 +14,15 @@ const pullProjects = async() => {
             }
             return 0
         }
-        return resp.data.projects.sort(compareProjects);
+        const compareProjectCompleted = (a, b) => {
+            if (!a.completed && b.completed) {
+                return -1
+            } else if (a.completed && !b.completed) {
+                return 1
+            }
+            return 0
+        }
+        return resp.data.projects.sort(compareProjectName).sort(compareProjectCompleted);
     } catch (err) {
         console.error(err);
         return undefined;
@@ -47,20 +55,25 @@ const deleteProject = async({ id }) => {
 }
 
 const getTasks = async(projectId) => {
+    // gets tasks and sorts them by date
     try {
         const resp = await axios.get("/api/project/" + projectId + "/tasks")
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
-        const compareTasks = (a, b) => {
-            if (a.detail < b.detail) {
+
+        const compareTasksDate = (a, b) => {
+            const aStart = new Date(a.start)
+            const bStart = new Date(b.start)
+
+            if (aStart > bStart) {
                 return -1
-            } else if (a.detail > b.detail) {
+            } else if (aStart < bStart) {
                 return 1
             }
             return 0
         }
-        return resp.data.tasks.sort(compareTasks);
+        return resp.data.tasks.sort(compareTasksDate);
     } catch (err) {
         console.error(err);
         return undefined;
@@ -82,6 +95,15 @@ const deleteTask = async(projectId, taskId) => {
     return resp.status
 }
 
+const getTimeSpentOnProject = async(projectId) => {
+    try {
+        const resp = await axios.get("/api/project/" + projectId + "/time");
+        return resp.data.milliseconds
+    } catch (err) {
+        console.error(err)
+        return null;
+    }
+}
 export {
     pullProjects,
     getProject,
@@ -91,5 +113,6 @@ export {
     getTasks,
     addTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    getTimeSpentOnProject
 }

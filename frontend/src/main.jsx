@@ -16,15 +16,17 @@ import './index.css'
 createRoot(document.getElementById('root')).render(<>
   <BrowserRouter>
     <ProjectNav/>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/google-signup" element={<GoogleAuth redirectURL="/" authPath="google-signup" />} />
-      <Route path="/google-signin" element={<GoogleAuth redirectURL="/" authPath="google-signin"/>} />
-      <Route path="/ping" element={<Ping/>}/>
-      <Route path="/projects" element={<Authenticated/>} >
-        <Route index element={<Projects/>} />
-        <Route path=":projectId" element={<Project />} />
-      </Route>
-    </Routes>
+    <div id="landing-page">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/google-signup" element={<GoogleAuth redirectURL="/" authPath="google-signup" />} />
+        <Route path="/google-signin" element={<GoogleAuth redirectURL="/" authPath="google-signin"/>} />
+        <Route path="/ping" element={<Ping/>}/>
+        <Route path="/projects" element={<Authenticated/>} >
+          <Route index element={<Projects/>} />
+          <Route path=":projectId" element={<Project />} />
+        </Route>
+      </Routes>
+    </div>
   </BrowserRouter>
 </>)

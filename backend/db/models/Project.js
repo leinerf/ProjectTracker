@@ -14,7 +14,7 @@ const Project = sequelize.define(
             }
         },
         description: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT('medium'),
         },
         id: {
             type: Sequelize.UUID,
