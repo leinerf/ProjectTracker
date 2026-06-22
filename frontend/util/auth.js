@@ -5,13 +5,14 @@ const signInGoogleAuth = (redirectPath) => {
     let form = document.createElement('form');
     form.setAttribute('method', 'GET'); // Send as a GET request.
     form.setAttribute('action', oauth2Endpoint);
-
     // Parameters to pass to OAuth 2.0 endpoint.
+    const redirectBase =
+        import.meta.env.MODE === "production" ? PROD_BASE_URL : BASE_URL
     let params = {
         // eslint-disable-next-line no-undef
         'client_id': ENV_CLIENT_ID,
         // eslint-disable-next-line no-undef
-        'redirect_uri': BASE_URL + "/" + redirectPath,
+        'redirect_uri': redirectBase + "/" + redirectPath,
         'response_type': 'token',
         'scope': 'https://www.googleapis.com/auth/userinfo.email',
         'include_granted_scopes': 'true',

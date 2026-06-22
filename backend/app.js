@@ -1,8 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import cors from "cors";
-
+import path from 'node:path'
 //import db
 import db from "./db/index.js";
 
@@ -17,17 +16,23 @@ import jwtWrapper from "./middleware/jwtWrapper.js";
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
-// app.use(cors());
 
+//create path for static build for app
+const __dirname = path.dirname(
+    import.meta.dirname)
+const frontendFile = path.join(__dirname, process.env.FRONTEND_BUILD)
+const assets = path.join(path.dirname(frontendFile), "assets");
 
 
 //setup env variables
 const port = process.env.PORT;
-
 app.use("/auth", authRouter(db));
-// app.use("/api", expressjwt({ secret: process.env.JWT_SECRET, algorithms: [process.env.JWT_ALGO] }), )
-
 app.use("/api", jwtWrapper(), apiRouter(db));
+app.use(express.static(path.dirname(frontendFile)))
+
+app.get('/*path', (req, res) => {
+    return res.sendFile(frontendFile);
+});
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);

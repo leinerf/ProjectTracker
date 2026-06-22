@@ -9,8 +9,12 @@ config();
 export default defineConfig({
     plugins: [react()],
     define: {
+        // eslint-disable-next-line no-undef
         "ENV_CLIENT_ID": JSON.stringify(process.env.CLIENT_ID),
-        "BASE_URL": JSON.stringify(process.env.BASE_URL)
+        // eslint-disable-next-line no-undef
+        "BASE_URL": JSON.stringify(process.env.BASE_URL),
+        // eslint-disable-next-line no-undef
+        "PROD_BASE_URL": JSON.stringify(process.env.PROD_BASE_URL)
     },
     server: {
         proxy: {
@@ -23,5 +27,5 @@ export default defineConfig({
                 changeOrigin: true,
             }
         },
-    }
+    },
 })
