@@ -7,6 +7,7 @@ function Home() {
   const redirectBase =
         import.meta.env.MODE === "production" ? PROD_BASE_URL : BASE_URL
   console.log(redirectBase)
+  
   return (
       <div className="content center-content">
         {isAuthenticated() ? <Profile/>: <Auth/>}

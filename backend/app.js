@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import path from 'node:path'
+import { config } from "dotenv"
+
 //import db
 import db from "./db/index.js";
 
@@ -12,6 +14,8 @@ import apiRouter from "./routes/api.js";
 //custom middleware
 import jwtWrapper from "./middleware/jwtWrapper.js";
 
+// load environment variables
+config();
 //setup app
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +37,8 @@ app.use(express.static(path.dirname(frontendFile)))
 app.get('/*path', (req, res) => {
     return res.sendFile(frontendFile);
 });
+
+console.log(process.env);
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
