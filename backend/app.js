@@ -38,8 +38,6 @@ app.get('/*path', (req, res) => {
     return res.sendFile(frontendFile);
 });
 
-console.log(process.env);
-
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });

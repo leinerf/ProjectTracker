@@ -4,10 +4,8 @@ import { config } from "dotenv"
 
 // load environment variables
 config();
-console.log("building this");
-// eslint-disable-next-line no-undef
-console.log(process.env)
-    // https://vite.dev/config/
+
+// https://vite.dev/config/
 export default defineConfig({
     plugins: [react()],
     define: {
