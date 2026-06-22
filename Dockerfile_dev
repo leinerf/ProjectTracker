@@ -4,4 +4,4 @@ COPY . .
 RUN ./build.sh
 WORKDIR /app/backend
 EXPOSE 3000
-ENTRYPOINT ["node", "app.js"]
+ENTRYPOINT ["node", "--env-file=.env-prod" ,"app.js"]
