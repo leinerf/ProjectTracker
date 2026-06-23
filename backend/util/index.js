@@ -1,14 +1,15 @@
 import jwt from "jsonwebtoken";
+import appConfig from "../config.js";
 
 const jwtExp = (hours) => {
     return 60 * 60 * hours
 }
 const createJWT = (payload) => {
-    const expiresIn = jwtExp(process.env.JWT_EXPIRATION)
+    const expiresIn = jwtExp(appConfig.jwtExpiration)
     const token = jwt.sign(
         payload,
-        process.env.JWT_SECRET, {
-            algorithm: process.env.JWT_ALGO,
+        appConfig.jwtSecret, {
+            algorithm: appConfig.jwtAlgo,
             expiresIn: expiresIn
         },
     );

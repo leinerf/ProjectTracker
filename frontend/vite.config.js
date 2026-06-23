@@ -4,7 +4,6 @@ import { config } from "dotenv"
 
 // load environment variables
 config();
-
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [react()],

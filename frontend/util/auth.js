@@ -7,6 +7,7 @@ const signInGoogleAuth = (redirectPath) => {
     form.setAttribute('action', oauth2Endpoint);
     // Parameters to pass to OAuth 2.0 endpoint.
     const redirectBase =
+        // eslint-disable-next-line no-undef
         import.meta.env.MODE === "production" ? PROD_BASE_URL : BASE_URL
     let params = {
         // eslint-disable-next-line no-undef
