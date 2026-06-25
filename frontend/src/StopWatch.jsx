@@ -12,8 +12,8 @@ function StopWatch({task, editTask, active, setActive}){
     useEffect(() =>{
         if(active === task.id){
             setIntervalRef(setInterval(() => {
-                setTime(time + 1)//adds 10 milliseconds every 10milliseconds 
-            }, 1))
+                setTime(time + 10)//adds 10 milliseconds every 10milliseconds 
+            }, 10))
         } else {
             editTask({...task, milliseconds: time})
         }

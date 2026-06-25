@@ -1,15 +1,16 @@
 import { Sequelize } from "sequelize";
+import appConfig from "../config.js";
 
 const sequelize = new Sequelize({
-    database: process.env.DATABASE,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    database: appConfig.database,
+    username: appConfig.dbUser,
+    password: appConfig.dbPassword,
+    host: appConfig.dbHost,
+    port: appConfig.dbPort,
     dialect: "postgres",
     dialectOptions: {
         ssl: {
-            require: true,
+            require: appConfig.appEnv !== 'dev' ? true : false,
             rejectUnauthorized: false // <<<<<<< YOU NEED THIS
         }
     },
