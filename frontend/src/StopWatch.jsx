@@ -6,26 +6,29 @@ import "./StopWatch.css";
 import Button from "react-bootstrap/Button";
 
 function StopWatch({task, editTask, active, setActive}){
-    const [time, setTime] = useState(task.milliseconds);   
-    const [intervalRef, setIntervalRef] = useState(undefined);
-
+    const [time, setTime] = useState(task.milliseconds);
+    const [intialTime, setInitalTime] = useState(task.milliseconds)
+    const [start, setStart] = useState(null);  
     useEffect(() =>{
+        let interval;
         if(active === task.id){
-            setIntervalRef(setInterval(() => {
-                setTime(time + 10)//adds 10 milliseconds every 10milliseconds 
-            }, 10))
+            interval = setInterval(() => {
+                const now = new Date()
+                setTime((now - start))//adds 10 milliseconds every 10milliseconds 
+            }, 10)
         } else {
             editTask({...task, milliseconds: time})
         }
-
-        return () => clearInterval(intervalRef);
+        return () => clearInterval(interval);
     }, [time, active])
 
     const pauseHandler = async () => {
         if(active === task.id){
             setActive(null)
+            setInitalTime(time);
         } else {
             setActive(task.id)
+            setStart(new Date(Date.now() - intialTime));
         }
     }
     
