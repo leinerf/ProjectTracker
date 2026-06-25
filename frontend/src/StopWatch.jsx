@@ -26,7 +26,7 @@ function StopWatch({task, editTask, active, setActive}){
         if(active === task.id){
             setActive(null)
             setInitalTime(time);
-        } else {
+        } else if(active === null){
             setActive(task.id)
             setStart(new Date(Date.now() - intialTime));
         }
