@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -6,14 +6,28 @@ import axios from "axios";
 import { getClientAuth, setClientAuth } from "../util/auth.js";
 import { useNavigate } from "react-router";
 import "./Profile.css"
+import { getProjectsTime } from "../util/api.js";
+import { hourMinSecondsMilli, formatDigit } from "../util/index.js";
 
 function Profile() {
     const navigate = useNavigate();
     const {username, email } = getClientAuth();
     const [show, setShow] = useState(false);
     const [usrname, setUserName] = useState(username);
+    const [time, setTime] = useState(0);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
+
+    const pullProjectTime = async () => {
+        const pulledTime = await getProjectsTime()
+        setTime(pulledTime);
+    }
+
+    useEffect(() => {
+         // eslint-disable-next-line react-hooks/set-state-in-effect
+         pullProjectTime();
+    }, [])
+
     const onUsrnameChange = (event) => {
         const { value } = event.target
         setUserName(value)
@@ -35,6 +49,7 @@ function Profile() {
         navigate("/projects")
     }
 
+    const { hour, min, sec, milliseconds } = hourMinSecondsMilli(time)
     return <>
         <div>
             <Modal show={show} onHide={handleClose}>
@@ -68,7 +83,7 @@ function Profile() {
                 , lets get started on tracking your projects</h1>
             <p className="description">We have your email as {email}.</p>
             {/* <TODO: get total hours spent on projects> */}
-            <p className="description">You worked on your project for <span className="bold-text">2 hours 45 minutes 30 seconds</span> today.</p>
+            <p className="description">You worked on your projects for <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span> today.</p>
             <Button variant="dark" onClick={goToProjects}>
                 Go to Projects
             </Button>
