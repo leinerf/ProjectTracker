@@ -38,6 +38,19 @@ export default (db) => {
         }
     })
 
+    router.get("/projects/time", async(req, res) => {
+        try {
+            const { id: userID } = req.auth;
+            const tasks = await db.Task.findAll({ where: { user_id: userID } })
+            let result = 0;
+            tasks.forEach(task => result += task.milliseconds);
+            return res.status(200).json({ time: result })
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ err });
+        }
+    })
+
     router.post("/project", async(req, res) => {
         try {
             const { id: userID } = req.auth;

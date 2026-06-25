@@ -35,3 +35,10 @@ nvm use 24.15.0
 npm install
 npm run dev
 ```
+
+### Run app in docker
+Change DB_HOST value from localhost to host.docker.internal to access host database
+'''
+docker build -f dev.dockerfile -t project-tracker:latest .
+docker run -d -p 3000:3000 project-tracker:latest --add-host=host.docker.internal:host-gateway
+'''

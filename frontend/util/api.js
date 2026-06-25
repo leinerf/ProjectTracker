@@ -29,6 +29,19 @@ const pullProjects = async() => {
     }
 }
 
+const getProjectsTime = async() => {
+    try {
+        const resp = await axios.get("/api/projects/time");
+        if (resp.status !== 200) {
+            throw new Error("status code not 200: " + resp.status)
+        }
+        return resp.data.time;
+    } catch (err) {
+        console.error(err);
+        return 0;
+    }
+}
+
 const getProject = async({ id }) => {
     try {
         const resp = await axios.get("/api/project/" + id)
@@ -106,6 +119,7 @@ const getTimeSpentOnProject = async(projectId) => {
 }
 export {
     pullProjects,
+    getProjectsTime,
     getProject,
     addProject,
     updateProject,
