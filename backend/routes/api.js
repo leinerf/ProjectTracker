@@ -6,7 +6,7 @@ import { createJWT } from '../util/index.js';
 export default (db) => {
     const router = express.Router();
 
-    router.put("/user", async(req, res) => {
+    router.put("/users", async(req, res) => {
         try {
             const { id } = req.auth;
             const { username: newUsername } = req.body;
@@ -51,7 +51,7 @@ export default (db) => {
         }
     })
 
-    router.post("/project", async(req, res) => {
+    router.post("/projects", async(req, res) => {
         try {
             const { id: userID } = req.auth;
             const { name, description } = req.body;
@@ -66,7 +66,7 @@ export default (db) => {
         }
     })
 
-    router.get("/project/:id", async(req, res) => {
+    router.get("/projects/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
@@ -78,7 +78,7 @@ export default (db) => {
         }
     })
 
-    router.put("/project/:id", async(req, res) => {
+    router.put("/projects/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
@@ -97,7 +97,7 @@ export default (db) => {
         }
     })
 
-    router.delete("/project/:id", async(req, res) => {
+    router.delete("/projects/:id", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
@@ -112,7 +112,7 @@ export default (db) => {
         }
     })
 
-    router.get("/project/:id/time", async(req, res) => {
+    router.get("/projects/:id/time", async(req, res) => {
         const id = req.params.id
         const { id: userID } = req.auth;
         try {
@@ -126,7 +126,7 @@ export default (db) => {
         }
     })
 
-    router.get("/project/:projectId/tasks", async(req, res) => {
+    router.get("/projects/:projectId/tasks", async(req, res) => {
         try {
             const { projectId: project_id } = req.params;
             const { id: user_id } = req.auth;
@@ -142,7 +142,7 @@ export default (db) => {
         }
     })
 
-    router.post("/project/:projectId/task", async(req, res) => {
+    router.post("/projects/:projectId/tasks", async(req, res) => {
         try {
             const { detail, start } = req.body;
             const { projectId: project_id } = req.params;
@@ -163,7 +163,7 @@ export default (db) => {
         return res.status(500).json({ msg: "could not create task because of internal issues" })
     })
 
-    router.put("/project/:projectId/task/:taskId", async(req, res) => {
+    router.put("/projects/:projectId/tasks/:taskId", async(req, res) => {
         try {
             const { detail, start, finish, milliseconds } = req.body;
             const { projectId: project_id, taskId: id } = req.params;
@@ -186,7 +186,7 @@ export default (db) => {
         return res.status(500).json({ msg: "could not update task because of internal issues" })
     })
 
-    router.delete("/project/:projectId/task/:taskId", async(req, res) => {
+    router.delete("/projects/:projectId/tasks/:taskId", async(req, res) => {
         try {
             const { projectId: project_id, taskId: id } = req.params;
             const { id: user_id } = req.auth;

@@ -44,7 +44,7 @@ const getProjectsTime = async() => {
 
 const getProject = async({ id }) => {
     try {
-        const resp = await axios.get("/api/project/" + id)
+        const resp = await axios.get("/api/projects/" + id)
         return resp.data.project
     } catch (err) {
         console.error(err);
@@ -53,24 +53,24 @@ const getProject = async({ id }) => {
 }
 
 const addProject = async({ name, description }) => {
-    const resp = await axios.post("/api/project", { name, description });
+    const resp = await axios.post("/api/projects", { name, description });
     return resp.status
 }
 
 const updateProject = async({ name, description, id, completed }) => {
-    const resp = await axios.put("/api/project" + "/" + id, { name, description, completed });
+    const resp = await axios.put("/api/projects" + "/" + id, { name, description, completed });
     return resp.status
 }
 
 const deleteProject = async({ id }) => {
-    const resp = await axios.delete("/api/project" + "/" + id);
+    const resp = await axios.delete("/api/projects" + "/" + id);
     return resp.status
 }
 
 const getTasks = async(projectId) => {
     // gets tasks and sorts them by date
     try {
-        const resp = await axios.get("/api/project/" + projectId + "/tasks")
+        const resp = await axios.get("/api/projects/" + projectId + "/tasks")
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
@@ -94,23 +94,23 @@ const getTasks = async(projectId) => {
 }
 
 const addTask = async(projectId, { detail, start }) => {
-    const resp = await axios.post("/api/project/" + projectId + "/task", { detail, start })
+    const resp = await axios.post("/api/projects/" + projectId + "/tasks", { detail, start })
     return resp.status
 }
 
 const updateTask = async(projectId, taskId, { detail, start, milliseconds, finish }) => {
-    const resp = await axios.put("/api/project/" + projectId + "/task/" + taskId, { detail, start, milliseconds, finish })
+    const resp = await axios.put("/api/projects/" + projectId + "/tasks/" + taskId, { detail, start, milliseconds, finish })
     return resp.status
 }
 
 const deleteTask = async(projectId, taskId) => {
-    const resp = await axios.delete("/api/project/" + projectId + "/task/" + taskId);
+    const resp = await axios.delete("/api/projects/" + projectId + "/tasks/" + taskId);
     return resp.status
 }
 
 const getTimeSpentOnProject = async(projectId) => {
     try {
-        const resp = await axios.get("/api/project/" + projectId + "/time");
+        const resp = await axios.get("/api/projects/" + projectId + "/time");
         return resp.data.milliseconds
     } catch (err) {
         console.error(err)
