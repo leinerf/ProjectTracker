@@ -23,7 +23,7 @@ const TaskInfoModel = ({task, handleClose, show}) => {
             </Modal.Header>
             <Modal.Body>
                 <ul>
-                    <li>Start Datetime: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
+                    <li>Created Datetime: {new Date(task.start).toLocaleDateString()} - {new Date(task.start).toLocaleTimeString()}</li>
                     {task.finish ? <li>Finish Datetime: {new Date(task.finish).toLocaleDateString()} - {new Date(task.finish).toLocaleTimeString()}</li> : null }
                     <li>Total Time Spent: {`${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}:${formatDigit(milli).substring(0,2)}`}</li>
                 </ul>
@@ -238,8 +238,8 @@ function Project() {
             </div>
             <hr className="thick-hr long-hr"/>
             <div className="row-container">
-                <h1 onClick={() => {showTaskType("inProgress")}} style={taskType === "inProgress" ? {textDecoration: "underline"} : null} >InProgress</h1>
-                <h1 onClick={() => {showTaskType("finished")}} style={taskType === "finished" ? {textDecoration: "underline"} : null}>Finished</h1>
+                <h1 className="tab" onClick={() => {showTaskType("inProgress")}} style={taskType === "inProgress" ? {textDecoration: "underline"} : null} >InProgress</h1>
+                <h1 className="tab" onClick={() => {showTaskType("finished")}} style={taskType === "finished" ? {textDecoration: "underline"} : null}>Finished</h1>
             </div>
             <div className="fixed-height">    
                 <div className="mt-3">

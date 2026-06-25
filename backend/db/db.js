@@ -1,6 +1,13 @@
 import { Sequelize } from "sequelize";
 import appConfig from "../config.js";
 
+const options = {
+    ssl: {
+        require: true,
+        rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+    }
+}
+
 const sequelize = new Sequelize({
     database: appConfig.database,
     username: appConfig.dbUser,
@@ -8,11 +15,6 @@ const sequelize = new Sequelize({
     host: appConfig.dbHost,
     port: appConfig.dbPort,
     dialect: "postgres",
-    dialectOptions: {
-        ssl: {
-            require: appConfig.appEnv !== 'dev' ? true : false,
-            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-        }
-    },
+    dialectOptions: appConfig.appEnv === 'prod' ? options : {},
 });
 export default sequelize;

@@ -31,7 +31,7 @@ const pullProjects = async() => {
 
 const getProjectsTime = async() => {
     try {
-        const resp = await axios.get("/projects/time");
+        const resp = await axios.get("/api/projects/time");
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
