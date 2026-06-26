@@ -2,36 +2,138 @@ import express from 'express';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { createJWT } from '../util/index.js';
+import appConfig from '../config.js';
+import ResourceNotFound from '../Errors/ResourceNotFound.js';
+import ResourceConflictError from '../Errors/ResourceConflicError.js';
+
+/* 
+{
+  "orderID":3,
+  "productID":2,
+  "quantity":4,
+  "orderValue":16.60,
+  "links":[
+    {
+      "rel":"customer",
+      "href":"https://api.contoso.com/customers/3",
+      "action":"GET",
+      "types":["text/xml","application/json"]
+    },
+    {
+      "rel":"customer",
+      "href":"https://api.contoso.com/customers/3",
+      "action":"PUT",
+      "types":["application/x-www-form-urlencoded"]
+    },
+    {
+      "rel":"customer",
+      "href":"https://api.contoso.com/customers/3",
+      "action":"DELETE",
+      "types":[]
+    },
+    {
+      "rel":"self",
+      "href":"https://api.contoso.com/orders/3",
+      "action":"GET",
+      "types":["text/xml","application/json"]
+    },
+    {
+      "rel":"self",
+      "href":"https://api.contoso.com/orders/3",
+      "action":"PUT",
+      "types":["application/x-www-form-urlencoded"]
+    },
+    {
+      "rel":"self",
+      "href":"https://api.contoso.com/orders/3",
+      "action":"DELETE",
+      "types":[]
+    }]
+}
+*/
 
 export default (db) => {
     const router = express.Router();
-
+    const baseURL = appConfig.baseURL + appConfig.appEnv === 'prod' ? "" : ":" + appConfig.port
     router.put("/users", async(req, res) => {
         try {
             const { id } = req.auth;
             const { username: newUsername } = req.body;
+            if (newUsername === undefined) {
+                throw new ResourceConflictError("users")
+            }
             const user = await db.User.findOne({ where: { id } })
+            if (user === null) {
+                throw new ResourceNotFound("users")
+            }
             user.set({ username: newUsername || user.username })
             await user.save();
             return res.status(200).json({
                 msg: "username changed to " + newUsername,
-                username: newUsername
+                username: newUsername,
+                links: [{
+                    rel: "users",
+                    href: baseURL + "/api/users",
+                    auth: "required",
+                    action: "PUT",
+                    types: ["application/json"]
+                }]
             })
         } catch (err) {
             console.error(err);
+            if (error instanceof ResourceNotFound) {
+                return res.status(error.status).json({ error: error.msg, resource: error.resource })
+            }
         }
-        return res.status(500).json({ msg: "something went wrong" });
+        return res.status(500).json({ errror: "Internal Issues. Try again later" });
     })
 
     router.get("/projects", async(req, res) => {
         try {
             const { id: userID } = req.auth;
             const projects = await db.Project.findAll({ where: { user_id: userID } });
+            if (projects === null) {
+                throw ResourceNotFound("projects");
+            }
             const projectList = projects.map(project => {
                 const { name, description, id, completed } = project.dataValues
                 return { name, description, id, completed }
             });
-            return res.status(200).json({ projects: projectList });
+            return res.status(200).json({
+                projects: projectList,
+                links: [{
+                        "rel": "self",
+                        "href": "https://api.contoso.com/orders/3",
+                        "action": "GET",
+                        "types": ["text/xml", "application/json"]
+                    },
+                    {
+                        rel: "projects",
+                        href: `${appConfig.baseURL}/api/projects`
+                        action: "GET",
+                        types: ["application/json"]
+                    }
+                ]
+            });
+        } catch (err) {
+            console.error(err)
+            if (err instanceof ResourceNotFound) {
+                return res.status(err.status).json({ error: err.message, resource: err.resource })
+            }
+
+        }
+        return res.status(500).json({ errror: "Internal Issues. Try again later" });
+    })
+
+    router.post("/projects", async(req, res) => {
+        try {
+            const { id: userID } = req.auth;
+            const { name, description } = req.body;
+            if (name === undefined || name.length === 0 || description === undefined || description.length === 0) {
+                throw new Error("missing or invalid inputs")
+            }
+            const project = await db.Project.create({ name, description, user_id: userID });
+            return res.status(200).json({ msg: "project added" });
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err })
@@ -48,21 +150,6 @@ export default (db) => {
         } catch (err) {
             console.error(err)
             return res.status(500).json({ err });
-        }
-    })
-
-    router.post("/projects", async(req, res) => {
-        try {
-            const { id: userID } = req.auth;
-            const { name, description } = req.body;
-            if (name === undefined || name.length === 0 || description === undefined || description.length === 0) {
-                throw new Error("missing or invalid inputs")
-            }
-            const project = await db.Project.create({ name, description, user_id: userID });
-            return res.status(200).json({ msg: "project added" });
-        } catch (err) {
-            console.error(err)
-            return res.status(500).json({ err })
         }
     })
 

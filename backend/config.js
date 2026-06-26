@@ -5,6 +5,7 @@ config()
 
 const appConfig = {
     appEnv: process.env.APP_ENV,
+    baseURL: process.env.BASE_URL,
     port: process.env.PORT,
     jwtExpiration: process.env.JWT_EXPIRATION,
     jwtSecret: process.env.JWT_SECRET,
