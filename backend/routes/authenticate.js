@@ -29,7 +29,6 @@ export default (db) => {
         } catch (err) {
             console.error(err)
         }
-
         return res.status(500).json({ msg: "could not verify email" });
     })
 
@@ -62,7 +61,6 @@ export default (db) => {
         } catch (err) {
             console.error(err);
         }
-
         return res.status(500).json({ msg: "could not verify email" });
     })
 

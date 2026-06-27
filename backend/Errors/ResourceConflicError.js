@@ -1,6 +1,8 @@
-class ResourceConflictError extends Error {
-    constructor(resource, ...params) {
-        super(resource, `Resource: ${resource} has conflict`, 409, ...params);
+import HttpError from "./HttpError.js";
+
+class ResourceConflictError extends HttpError {
+    constructor(resource, method, ...params) {
+        super(resource, `Resource: ${resource} has conflict`, 409, method, ...params);
     }
 }
 

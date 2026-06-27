@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const pullProjects = async() => {
+const pullProjects = async(time) => {
     try {
-        const resp = await axios.get("/api/projects")
+        const resp = await axios.get("/api/projects" + (time === "true" ? "?time=" + time : ""))
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
@@ -29,22 +29,9 @@ const pullProjects = async() => {
     }
 }
 
-const getProjectsTime = async() => {
+const getProject = async({ id }, time = "false") => {
     try {
-        const resp = await axios.get("/api/projects/time");
-        if (resp.status !== 200) {
-            throw new Error("status code not 200: " + resp.status)
-        }
-        return resp.data.time;
-    } catch (err) {
-        console.error(err);
-        return 0;
-    }
-}
-
-const getProject = async({ id }) => {
-    try {
-        const resp = await axios.get("/api/projects/" + id)
+        const resp = await axios.get(("/api/projects/" + id) + (time === "true" ? "?time=" + time : ""))
         return resp.data.project
     } catch (err) {
         console.error(err);
@@ -108,18 +95,8 @@ const deleteTask = async(projectId, taskId) => {
     return resp.status
 }
 
-const getTimeSpentOnProject = async(projectId) => {
-    try {
-        const resp = await axios.get("/api/projects/" + projectId + "/time");
-        return resp.data.milliseconds
-    } catch (err) {
-        console.error(err)
-        return null;
-    }
-}
 export {
     pullProjects,
-    getProjectsTime,
     getProject,
     addProject,
     updateProject,
@@ -127,6 +104,5 @@ export {
     getTasks,
     addTask,
     updateTask,
-    deleteTask,
-    getTimeSpentOnProject
+    deleteTask
 }

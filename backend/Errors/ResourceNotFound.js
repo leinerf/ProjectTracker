@@ -1,8 +1,8 @@
 import HttpError from "./HttpError.js";
 
 class ResourceNotFound extends HttpError {
-    constructor(resource, ...params) {
-        super(resource, `Resource: ${resource} not found`, 404, ...params);
+    constructor(resource, method, ...params) {
+        super(resource, `Resource: ${resource} not found`, 404, method, ...params);
     }
 
 }

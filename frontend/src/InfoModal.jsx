@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import { getTimeSpentOnProject } from '../util/api';
 import { formatDigit, hourMinSecondsMilli } from '../util';
 function InfoModal({project, show, setShow}) {
     const handleClose = () => {
@@ -9,15 +8,10 @@ function InfoModal({project, show, setShow}) {
     };
 
     const [time, setTime] = useState(0);
-
-    const pullTimeSpent = async () => {
-        const pulledTime = await getTimeSpentOnProject(project.id);
-        setTime(pulledTime);
-    }
     useEffect(() => {
         if(show){
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            pullTimeSpent()
+            setTime(project.milliseconds)
         }
     }, [show])
 

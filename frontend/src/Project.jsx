@@ -9,7 +9,6 @@ import { formatDigit, hourMinSecondsMilli } from "../util";
 import { addTask, deleteTask, getProject, getTasks, updateTask } from '../util/api';
 import StopWatch from './StopWatch';
 import InfoModal from './InfoModal';
-import { getTimeSpentOnProject } from '../util/api';
 
 import './Project.css'
 import './StopWatch.css'
@@ -48,8 +47,9 @@ function Project() {
     const {projectId: id } = params
     
     const pullProject = async (id) => {    
-        const pulledProject = await getProject({ id });
+        const pulledProject = await getProject({ id },"true");
         setProject(pulledProject);
+        setTime(pulledProject.milliseconds);
     }
 
     const pullTasks = async (id) => {
@@ -57,10 +57,7 @@ function Project() {
         setTasks(pulledTasks)
     }
 
-    const pullTimeSpent = async () => {
-        const pulledTime = await getTimeSpentOnProject(id);
-        setTime(pulledTime);
-    }
+    
     useEffect(() => {
         pullProject(id)
     }, [])    
@@ -72,7 +69,7 @@ function Project() {
     useEffect( () => {
         setActiveTasks(tasks.filter((task) => task.finish === null))
         setFinishedTasks(tasks.filter((task) => task.finish !== null))
-        pullTimeSpent()
+        pullProject(id)
     }, [tasks])
 
 
