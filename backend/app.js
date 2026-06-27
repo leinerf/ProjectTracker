@@ -14,7 +14,6 @@ import apiRouter from "./routes/api.js";
 //custom middleware
 import jwtWrapper from "./middleware/jwtWrapper.js";
 
-
 //setup app
 const app = express();
 app.use(bodyParser.json());

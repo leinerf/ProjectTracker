@@ -6,7 +6,7 @@ import axios from "axios";
 import { getClientAuth, setClientAuth } from "../util/auth.js";
 import { useNavigate } from "react-router";
 import "./Profile.css"
-import { getProjectsTime } from "../util/api.js";
+import {  pullProjects } from "../util/api.js";
 import { hourMinSecondsMilli, formatDigit } from "../util/index.js";
 
 function Profile() {
@@ -15,17 +15,24 @@ function Profile() {
     const [show, setShow] = useState(false);
     const [usrname, setUserName] = useState(username);
     const [time, setTime] = useState(0);
+    // TODO show projects summary on the bottom
+    const [projects, setProjects] = useState([])
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
 
-    const pullProjectTime = async () => {
-        const pulledTime = await getProjectsTime()
-        setTime(pulledTime);
+    const pullProjectWithTime = async () => {
+        const pulledProjects = await pullProjects("true")
+        setProjects(pulledProjects)
+        let milliseconds = 0;
+        for(let i = 0; i < pulledProjects.length; i++){
+            milliseconds += pulledProjects[i].milliseconds
+        }
+        setTime(milliseconds);
     }
 
     useEffect(() => {
          // eslint-disable-next-line react-hooks/set-state-in-effect
-         pullProjectTime();
+         pullProjectWithTime();
     }, [])
 
     const onUsrnameChange = (event) => {

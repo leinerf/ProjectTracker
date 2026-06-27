@@ -10,10 +10,9 @@ import "./Projects.css"
 function Projects(){
     let navigate = useNavigate();
     const [projects, setProjects] = useState([]);
-    
     const getProjects = async () => {
         try {
-            const pulledProjects = await pullProjects();
+            const pulledProjects = await pullProjects("true");
             if(pulledProjects !== undefined){
                 setProjects(pulledProjects);
             }
@@ -35,7 +34,7 @@ function Projects(){
 
     const removeProject = async ({id}) => {
         const status = await deleteProject({id})
-        if(status === 200){
+        if(status === 204){
             getProjects();    
         }
     }
