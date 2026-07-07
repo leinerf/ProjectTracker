@@ -3,7 +3,7 @@ import axios from "axios";
 import Button from 'react-bootstrap/Button';
 import { setClientAuth } from "../util/auth";
 
-function GoogleAuth({redirectURL, authPath}) {
+function GoogleAuth({redirectURL}) {
     const navigate = useNavigate();
     const verifyUser = async () => {
         const getAccessToken = () => {
@@ -26,7 +26,7 @@ function GoogleAuth({redirectURL, authPath}) {
             navigate(redirectURL);
         }
         try{
-            const resp = await axios.get(`/auth/${authPath}?access_token=${token}`);
+            const resp = await axios.get(`/auth/google-signin?access_token=${token}`);
             if(resp.status === 200){
                 const { username, email, jwt_exp } = resp.data;
                 if(username === undefined || email === undefined || jwt_exp === undefined){

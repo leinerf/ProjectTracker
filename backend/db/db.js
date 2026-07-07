@@ -17,4 +17,5 @@ const sequelize = new Sequelize({
     dialect: "postgres",
     dialectOptions: appConfig.appEnv === 'prod' ? options : {},
 });
+
 export default sequelize;

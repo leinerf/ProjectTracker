@@ -1,4 +1,4 @@
-const signInGoogleAuth = (redirectPath) => {
+const signInGoogleAuth = () => {
     let oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
 
     // Create <form> element to submit parameters to OAuth 2.0 endpoint.
@@ -13,7 +13,7 @@ const signInGoogleAuth = (redirectPath) => {
         // eslint-disable-next-line no-undef
         'client_id': ENV_CLIENT_ID,
         // eslint-disable-next-line no-undef
-        'redirect_uri': redirectBase + "/" + redirectPath,
+        'redirect_uri': redirectBase + "/google-signin",
         'response_type': 'token',
         'scope': 'https://www.googleapis.com/auth/userinfo.email',
         'include_granted_scopes': 'true',
