@@ -1,7 +1,15 @@
 import { config } from "dotenv"
+import path from "path";
+import { fileURLToPath } from "url";
 
 //load env
-config()
+const envPath = path.dirname(
+    fileURLToPath(
+        import.meta.url
+    )
+) + '/.env';
+
+config({ path: envPath });
 
 const appConfig = {
     appEnv: process.env.APP_ENV,
@@ -17,4 +25,5 @@ const appConfig = {
     database: process.env.DATABASE,
     frontendBuild: process.env.FRONTEND_BUILD
 }
+
 export default appConfig

@@ -41,7 +41,18 @@ const Project = sequelize.define(
         completed: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
-        }
+        },
+        due_date: {
+            type: DataTypes.DATE,
+        },
+        priority: {
+            type: DataTypes.INTEGER,
+            defaultValue: 9,
+            validate: {
+                min: 1,
+                max: 9
+            }
+        },
     }
 )
 
