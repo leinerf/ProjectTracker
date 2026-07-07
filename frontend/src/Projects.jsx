@@ -92,27 +92,24 @@ function Projects(){
             <div className="fixed-height">
                 {projects.map(
                     project => {
-                        return <div key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
-                            <div className="project-entry">
-                                <Stack direction="horizontal" gap={2}>
-                                    <button className="box-info" onClick={() => showInfoModel(project)} >
-                                        <span>I</span>
-                                    </button>   
-                                    <h4>{project.name}</h4>
-                                </Stack>
+                        return <div  key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
+                            <div className="d-flex justify-content-between flex-wrap align-items-center">
                                 <div>
-                                    <Stack direction="horizontal" gap={2}>
-                                        
-                                        <button className="box-info due-date">
-                                            <span>03/20/2027</span>
-                                        </button>
-                                        <button className="box-info priority">
-                                            <span>9</span>
-                                        </button>
-                                        <button className="box-info" onClick={() => redirectBtnHandler(project)}>
-                                            <span>Manage</span>
-                                        </button>
-                                    </Stack>
+                                    <h4>{project.name}</h4>
+                                </div>
+                                <div className="row-container d-flex gap-2 align-items-center flex-wrap">
+                                    <button className="box-info" onClick={() => showInfoModel(project)} >
+                                        <span>Details</span>
+                                    </button>  
+                                    <button className="box-info due-date">
+                                        <span>Due: 03/20/2027</span>
+                                    </button>
+                                    <button className="box-info priority">
+                                        <span>Priority: 9</span>
+                                    </button>
+                                    <button className="box-info" onClick={() => redirectBtnHandler(project)}>
+                                        <span>Manage</span>
+                                    </button>
                                 </div>
                             </div>
                             <hr />

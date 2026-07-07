@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 
-function ProjectModel({project, setProject, show, setShow, submitHandler}) {
+function ProjectModel({project, setProject, show, setShow, submitHandler, type}) {
     const [valid, setValid] = useState({})
     const [showErrors, setShowErrors] = useState(false)
     
@@ -57,7 +57,7 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
         <Modal show={show} onHide={handleClose}>
             <Form>
                 <Modal.Header closeButton>
-                <Modal.Title>New Project</Modal.Title>
+                <Modal.Title>{type === "add" ? "New Project" : "Edit Project"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                         { showErrors ? inputErrors() : null }    
@@ -89,7 +89,9 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
                             <Form.Select aria-label="status select" name={"status"} value={project.status} onChange={editProject} required={true}>
                                 <option>Open this select menu</option>
                                 <option value="InProgress">InProgress</option>
-                                <option value="Completed">Completed</option>
+                                {type === "edit" && (
+                                    <option value="Completed">Completed</option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                 </Modal.Body>
