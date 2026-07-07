@@ -55,32 +55,50 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
     
     return <>
         <Modal show={show} onHide={handleClose}>
-            { showErrors ? inputErrors() : null }    
             <Form>
                 <Modal.Header closeButton>
                 <Modal.Title>New Project</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                        { showErrors ? inputErrors() : null }    
                         <Form.Group className="mb-3" >
                             <Form.Label>Project</Form.Label>
                             <Form.Control type="text" placeholder="type the name of the project you want to work on"  name={"name"} value={project.name} onChange={editProject} required={true} />
-                            <Form.Control.Feedback type="invalid">
-                                Please choose a username.
-                            </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3" >
                             <Form.Label>Description</Form.Label>
                             <Form.Control as="textarea" rows={3} placeholder="type a description of the project you want to work on" name={"description"} value={project.description} onChange={editProject} required={true}/>
                         </Form.Group>
-                    
-                    
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Due Date</Form.Label>
+                            <Form.Control type="date" name={"dueDate"} value={project.dueDate} onChange={editProject} required={true}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Priority</Form.Label>
+                                <Form.Select aria-label="priority select" name={"priority"} value={project.priority} onChange={editProject} required={true}>
+                                    <option>Open this select menu</option>
+                                    {Array.from({length: 9}, (_, i) => i + 1).map(
+                                        (num) => (
+                                            <option value={num}>{num}</option>
+                                        )
+                                    )}
+                                </Form.Select>
+                        </Form.Group>
+                        <Form.Group className="mb-3" >
+                            <Form.Label>Status</Form.Label>
+                            <Form.Select aria-label="status select" name={"status"} value={project.status} onChange={editProject} required={true}>
+                                <option>Open this select menu</option>
+                                <option value="InProgress">InProgress</option>
+                                <option value="Completed">Completed</option>
+                            </Form.Select>
+                        </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
                 <Button type="submit" variant="dark" onClick={handleSubmit}>
-                    Save Changes
+                    <span>Save</span>
+                </Button>
+                <Button variant="secondary" onClick={handleClose}>
+                    <span>Close</span>
                 </Button>
                 </Modal.Footer>
             </Form>
