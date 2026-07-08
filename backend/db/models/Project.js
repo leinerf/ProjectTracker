@@ -41,6 +41,11 @@ const Project = sequelize.define(
         status: {
             type: DataTypes.ENUM('inProgress', 'completed'),
             defaultValue: "inProgress",
+            validate: {
+                isIn: [
+                    ['inProgress', 'completed']
+                ]
+            }
         },
         due_date: {
             type: DataTypes.DATE,
