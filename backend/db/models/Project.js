@@ -38,9 +38,9 @@ const Project = sequelize.define(
             },
             allowNull: false
         },
-        completed: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        status: {
+            type: DataTypes.ENUM('inProgress', 'completed'),
+            defaultValue: "inProgress",
         },
         due_date: {
             type: DataTypes.DATE,

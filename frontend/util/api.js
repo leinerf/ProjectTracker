@@ -39,13 +39,13 @@ const getProject = async({ id }, time = "false") => {
     return undefined
 }
 
-const addProject = async({ name, description }) => {
-    const resp = await axios.post("/api/projects", { name, description });
+const addProject = async({ name, description, dueDate, priority, status }) => {
+    const resp = await axios.post("/api/projects", { name, description, dueDate, priority, status });
     return resp.status
 }
 
-const updateProject = async({ name, description, id, completed }) => {
-    const resp = await axios.put("/api/projects" + "/" + id, { name, description, completed });
+const updateProject = async({ name, description, id, status }) => {
+    const resp = await axios.put("/api/projects" + "/" + id, { name, description, status });
     return resp.status
 }
 

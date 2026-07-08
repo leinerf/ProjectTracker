@@ -88,9 +88,9 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
                             <Form.Label>Status</Form.Label>
                             <Form.Select aria-label="status select" name={"status"} value={project.status} onChange={editProject} required={true}>
                                 <option>Open this select menu</option>
-                                <option value="InProgress">InProgress</option>
+                                <option value="inProgress">InProgress</option>
                                 {type === "edit" && (
-                                    <option value="Completed">Completed</option>
+                                    <option value="completed">Completed</option>
                                 )}
                             </Form.Select>
                         </Form.Group>

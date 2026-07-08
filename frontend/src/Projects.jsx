@@ -21,30 +21,13 @@ function Projects(){
         }
     }
 
-    const completeProject = async ({name, description, id, completed}) => {
-        try {
-            const status = await updateProject({name, description, id, completed: !completed})
-            if(status === 200){
-                getProjects();    
-            }
-        } catch(err){
-            console.error(err);
-        }
-    }
-
-    const removeProject = async ({id}) => {
-        const status = await deleteProject({id})
-        if(status === 204){
-            getProjects();    
-        }
-    }
-
     useEffect(
         () => {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             getProjects();
         }, []
     )
+
     const [projectToAdd, setProjectToAdd] = useState({name: "", description: ""})
     const [showAdd, setShowAdd] = useState(false);
 
@@ -60,6 +43,14 @@ function Projects(){
     const [projectToEdit, setProjectToEdit] = useState({name: "", description: ""})
     const [showEdit, setShowEdit] = useState(false);
 
+    const editSubmitHandler = async () => {
+        try {
+            await updateProject(projectToEdit);
+            getProjects();
+        }catch(err){
+            console.error(err);
+        }
+    }
     const redirectBtnHandler = (project) => {
         navigate(project.id)
     }
@@ -73,7 +64,8 @@ function Projects(){
     }
     
     return <>
-        <ProjectModel project={projectToAdd} setProject={setProjectToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler}/>
+        <ProjectModel project={projectToAdd} setProject={setProjectToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler} type="add"/>
+        <ProjectModel project={projectToEdit} setProject={setProjectToEdit} show={showEdit} setShow={setShowEdit} submitHandler={editSubmitHandler} type="edit"/>
         <InfoModal project={projectInfo} show={showInfo} setShow={setShowInfo} />
         <div>
             <h1 className="header row-container  align-items-center">
@@ -102,10 +94,10 @@ function Projects(){
                                         <span>Details</span>
                                     </button>  
                                     <button className="box-info due-date">
-                                        <span>Due: 03/20/2027</span>
+                                        <span>Due: {project.due_date ? new Date(project.due_date).toLocaleDateString() : "No due date"}</span>
                                     </button>
                                     <button className="box-info priority">
-                                        <span>Priority: 9</span>
+                                        <span>Priority: {project.priority}</span>
                                     </button>
                                     <button className="box-info" onClick={() => redirectBtnHandler(project)}>
                                         <span>Manage</span>

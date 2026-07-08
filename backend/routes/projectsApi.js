@@ -42,11 +42,12 @@ const projectsRoutes = db => {
         url: baseUrl,
         handler: async(req, res) => {
             const { id: userID } = req.auth;
-            const { name, description } = req.body;
-            if (name === undefined || name.length === 0 || description === undefined || description.length === 0) {
+            const { name, description, priority, dueDate, status } = req.body;
+            const due_date = new Date(dueDate)
+            if (name === undefined || name.length === 0 || description === undefined || description.length === 0 || priority === undefined || priority < 1 || priority > 9 || dueDate === undefined || isNaN(due_date.getTime()) || status === undefined || (status !== "inProgress" && status !== "completed")) {
                 throw new ResourceBadRequest("projects", req.method)
             }
-            const project = await db.Project.create({ name, description, user_id: userID });
+            const project = await db.Project.create({ name, description, user_id: userID, priority, due_date, status });
             const hyperLinks = createHyperLinks(project.id)
             return res.status(201).json({
                 project: project.toJSON(),
@@ -90,18 +91,20 @@ const projectsRoutes = db => {
         handler: async(req, res) => {
             const id = req.params.id
             const { id: userID } = req.auth;
-            const { name, description, completed } = req.body;
+            const { name, description, completed, priority, dueDate, status } = req.body;
             const project = await db.Project.findOne({ where: { id, user_id: userID } });
             if (project === null) {
                 throw new ResourceNotFound("projects", req.method)
             }
-            if (name !== undefined && typeof name !== "string" || description !== undefined && typeof description !== "string" || completed !== undefined && typeof completed !== "boolean") {
+            if (name !== undefined && typeof name !== "string" || description !== undefined && typeof description !== "string" || priority !== undefined && typeof priority !== "number" || dueDate !== undefined && typeof dueDate !== "string" || status !== undefined && typeof status !== "string") {
                 throw new ResourceConflictError("projects", req.method);
             }
             project.set({
                 name: name !== undefined ? name : project.name,
                 description: description !== undefined ? description : project.description,
-                completed: completed !== undefined ? completed : project.completed
+                priority: priority !== undefined ? priority : project.priority,
+                due_date: dueDate !== undefined ? dueDate : project.due_date,
+                status: status !== undefined ? status : project.status
             })
             await project.save();
             const hyperLinks = createHyperLinks(project.id)
