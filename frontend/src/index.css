@@ -91,6 +91,12 @@ h6 {
     scrollbar-width: thick;
 }
 
+.column-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .btn-circle {
     border-radius: 100px;
     width: 45px;

@@ -11,58 +11,28 @@ import "./Projects.css"
 function Projects(){
     let navigate = useNavigate();
     const [projects, setProjects] = useState([]);
-    const [sortFn, setSortFn] = useState("sortByName");
+    const [sortOption, setSortOption] = useState("createdAt");
     const [projectStatus, setProjectStatus] = useState("inProgress");
+    const sortingOptions = ["name", "priority", "due_date", "createdAt"]
+    const [offset, setOffset] = useState(0)
+    const [limit, setLimit] = useState(10)
 
-    const sortFns = {
-        sortByName: (a, b) => {
-            if(a.name < b.name){
-                return -1;
-            }
-            if(a.name > b.name){
-                return 1;
-            }
-            return 0;
-        },
-        sortByDueDate: (a, b) => {
-            const aDate = new Date(a.due_date);
-            const bDate = new Date(b.due_date);
-            if(aDate < bDate){
-                return -1;
-            }
-            if(aDate > bDate){
-                return 1;
-            }
-            return 0;
-        },
-        sortByPriority: (a, b) => {
-            if(a.priority < b.priority){
-                return -1;
-            }
-            if(a.priority > b.priority){
-                return 1;
-            }
-            return 0;
-        }
-    }
     
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        projects.sort(sortFns[sortFn])
-        setProjects([...projects]);
-    }, [sortFn])
-    
-    const pullProjects = async () => {
+    const pullProjects = async (sort, offset, limit, status) => {
         try {
-            const pulledProjects = await getProjects();
+            const pulledProjects = await getProjects(sort, offset, limit, status);
             if(pulledProjects !== undefined){
-                pulledProjects.sort(sortFns[sortFn]);
                 setProjects(pulledProjects);
             }
         } catch(err){
             console.error(err)
         }
     }
+    
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        pullProjects(sortOption, 0, 10, status)
+    }, [sortOption])
 
     useEffect(
         () => {
@@ -127,6 +97,7 @@ function Projects(){
     }
     
     const filteredProjects = projects.filter(project => project.status ===  projectStatus);
+    console.log(filteredProjects)
     return <>
         <ProjectModel project={projectToAdd} setProject={setProjectToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler} type="add"/>
         <ProjectModel project={projectToEdit} setProject={setProjectToEdit} show={showEdit} setShow={setShowEdit} submitHandler={editSubmitHandler} type="edit"/>
@@ -141,17 +112,19 @@ function Projects(){
                 </Button>
             </h1>
             <div className="row-container">
-                <span className="tab" onClick={() => setProjectStatus("inProgress")} style={projectStatus === "inProgress" ? { fontWeight: 'bold', textDecoration: 'underline' } : null}>In Progress</span>
-                <span className="tab" onClick={() => setProjectStatus("completed")} style={projectStatus === "completed" ? { fontWeight: 'bold', textDecoration: 'underline' } : null}>Completed</span>
-                <select name="sort" id="sort" value={sortFn} onChange={(e) => setSortFn(e.target.value)}> 
+                <select name="sort" className="selector" value={sortFn} onChange={(e) => setSortFn(e.target.value)}> 
                     {Object.keys(sortFns).map((key) => {
                         return <option className="sort-option" key={key} value={key}>{key}</option>
                     })}
                 </select>
+                <select name="status" className="selector" value={projectStatus} onChange={(e) => setProjectStatus(e.target.value)}>
+                    <option value="inProgress">inProgress</option>
+                    <option value="completed">completed</option>
+                </select>
             </div>
             <hr className="thick-hr long-hr"/>
             
-            <div className="fixed-height">
+            <div className="fixed-height column-container">
                 {filteredProjects.map(
                     project => {
                         return <div  key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
@@ -183,7 +156,12 @@ function Projects(){
                             <hr />
                         </div>
                     }
-                )}          
+                )}
+                <div className="align-self-center">
+                    <button className="box-info" onClick={() => console.log("load more")}>
+                        <span>Load more</span>
+                    </button>
+                </div>       
             </div>
         </div>
     </>

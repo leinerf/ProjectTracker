@@ -13,7 +13,31 @@ const projectsRoutes = db => {
         url: baseUrl,
         handler: async(req, res) => {
             const { id: userID } = req.auth;
-            const projects = await db.Project.findAll({ where: { user_id: userID } });
+            const { sort, offset, limit, status } = req.query;
+            const sortingTypes = ["name", "priority", "due_date"]
+            const sortingOptions = {
+                "name": ["name", "ASC"],
+                "priority": ["priority", "DESC"],
+                "due_date": ["due_date", "ASC"],
+            }
+            if (sort !== undefined && !sortingTypes.includes(sort)) {
+                throw new ResourceBadRequest("projects", req.method)
+            }
+            if (offset !== undefined && (isNaN(parseInt(offset)) || parseInt(offset) < 0)) {
+                throw new ResourceBadRequest("projects", req.method)
+            }
+            if (limit !== undefined && (isNaN(parseInt(limit)) || parseInt(limit) < 0)) {
+                throw new ResourceBadRequest("projects", req.method)
+            }
+            if (status !== undefined && ["inProgress", "completed"].includes(status)) {
+                throw new ResourceBadRequest("projects", req.method)
+            }
+            const projects = await db.Project.findAll({
+                where: { user_id: userID, status: status !== undefined ? status : "inProgress" },
+                order: sort !== undefined ? [sortingOptions[sort]] : [sortingOptions.due_date],
+                offset: offset !== undefined ? parseInt(offset) : 0,
+                limit: limit !== undefined ? parseInt(limit) : 10
+            });
             if (projects === null) {
                 throw ResourceNotFound("projects", req.method);
             }
@@ -25,7 +49,10 @@ const projectsRoutes = db => {
             const hyperLinks = createHyperLinks()
             return res.status(200).json({
                 projects: projectList,
-                links: hyperLinks
+                links: hyperLinks,
+                order: sort !== undefined ? sortingOptions[sort] : sortingOptions.due_date,
+                offset: offset !== undefined ? parseInt(offset) : 0,
+                limit: limit !== undefined ? parseInt(limit) : 10
             });
         }
     }, {
