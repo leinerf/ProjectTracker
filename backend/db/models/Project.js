@@ -15,6 +15,9 @@ const Project = sequelize.define(
         },
         description: {
             type: DataTypes.TEXT('medium'),
+            validate: {
+                isNotEmptyString
+            }
         },
         id: {
             type: Sequelize.UUID,
@@ -38,12 +41,21 @@ const Project = sequelize.define(
             },
             allowNull: false
         },
-        completed: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        status: {
+            type: DataTypes.ENUM('inProgress', 'completed'),
+            defaultValue: "inProgress",
+            validate: {
+                isIn: [
+                    ['inProgress', 'completed']
+                ]
+            }
         },
         due_date: {
             type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true
+            }
         },
         priority: {
             type: DataTypes.INTEGER,

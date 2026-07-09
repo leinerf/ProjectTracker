@@ -1,28 +1,12 @@
 import axios from "axios";
 
-const pullProjects = async(time) => {
+const getProjects = async() => {
     try {
-        const resp = await axios.get("/api/projects" + (time === "true" ? "?time=" + time : ""))
+        const resp = await axios.get("/api/projects")
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
-        const compareProjectName = (a, b) => {
-            if (a.name < b.name) {
-                return -1
-            } else if (a.name > b.name) {
-                return 1
-            }
-            return 0
-        }
-        const compareProjectCompleted = (a, b) => {
-            if (!a.completed && b.completed) {
-                return -1
-            } else if (a.completed && !b.completed) {
-                return 1
-            }
-            return 0
-        }
-        return resp.data.projects.sort(compareProjectName).sort(compareProjectCompleted);
+        return resp.data.projects
     } catch (err) {
         console.error(err);
         return undefined;
@@ -39,14 +23,20 @@ const getProject = async({ id }, time = "false") => {
     return undefined
 }
 
-const addProject = async({ name, description }) => {
-    const resp = await axios.post("/api/projects", { name, description });
-    return resp.status
+const addProject = async({ name, description, due_date, priority, status }) => {
+    const resp = await axios.post("/api/projects", { name, description, due_date, priority: parseInt(priority), status });
+    if (resp.status !== 201) {
+        throw new Error("status code not 201: " + resp.status)
+    }
+    return resp.data
 }
 
-const updateProject = async({ name, description, id, completed }) => {
-    const resp = await axios.put("/api/projects" + "/" + id, { name, description, completed });
-    return resp.status
+const updateProject = async({ name, description, id, status, due_date, priority }) => {
+    const resp = await axios.put("/api/projects" + "/" + id, { name, description, status, due_date, priority: parseInt(priority) });
+    if (resp.status !== 200) {
+        throw new Error("status code not 200: " + resp.status)
+    }
+    return resp.data
 }
 
 const deleteProject = async({ id }) => {
@@ -96,7 +86,7 @@ const deleteTask = async(projectId, taskId) => {
 }
 
 export {
-    pullProjects,
+    getProjects,
     getProject,
     addProject,
     updateProject,

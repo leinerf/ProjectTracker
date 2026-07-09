@@ -22,9 +22,10 @@ function InfoModal({project, show, setShow}) {
                 <Modal.Title>{project.name}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p className='mb-3'>{project.description}</p>
-                <p>Total Time Spent: <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span></p>
-                <p className='text-muted'>(hour:min:seconds:milliseconds)</p>
+                <p className='mb-3'>
+                    Description: <br/>
+                    {project.description}
+                </p>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Close</Button>

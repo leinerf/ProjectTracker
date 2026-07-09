@@ -129,3 +129,24 @@ button.btn-circle>svg {
     width: 10px;
     height: 10px;
 }
+
+.box-info {
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 5px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: inherit;
+}
+
+.tab {
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1.5em;
+}
+
+.tab:hover {
+    cursor: pointer;
+    background-color: #e5e5e5;
+}

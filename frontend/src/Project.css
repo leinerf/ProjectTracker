@@ -2,16 +2,6 @@
     font-size: 2em;
 }
 
-.tab {
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.tab:hover {
-    cursor: pointer;
-    background-color: #e5e5e5;
-}
-
 @media (max-width: 576px) {
     h1.header {
         font-size: 2em;

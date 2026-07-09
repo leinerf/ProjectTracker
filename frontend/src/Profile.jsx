@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -6,7 +6,6 @@ import axios from "axios";
 import { getClientAuth, setClientAuth } from "../util/auth.js";
 import { useNavigate } from "react-router";
 import "./Profile.css"
-import {  pullProjects } from "../util/api.js";
 import { hourMinSecondsMilli, formatDigit } from "../util/index.js";
 
 function Profile() {
@@ -14,26 +13,9 @@ function Profile() {
     const {username, email } = getClientAuth();
     const [show, setShow] = useState(false);
     const [usrname, setUserName] = useState(username);
-    const [time, setTime] = useState(0);
     // TODO show projects summary on the bottom
-    const [projects, setProjects] = useState([])
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
-
-    const pullProjectWithTime = async () => {
-        const pulledProjects = await pullProjects("true")
-        setProjects(pulledProjects)
-        let milliseconds = 0;
-        for(let i = 0; i < pulledProjects.length; i++){
-            milliseconds += pulledProjects[i].milliseconds
-        }
-        setTime(milliseconds);
-    }
-
-    useEffect(() => {
-         // eslint-disable-next-line react-hooks/set-state-in-effect
-         pullProjectWithTime();
-    }, [])
 
     const onUsrnameChange = (event) => {
         const { value } = event.target
@@ -56,7 +38,6 @@ function Profile() {
         navigate("/projects")
     }
 
-    const { hour, min, sec, milliseconds } = hourMinSecondsMilli(time)
     return <>
         <div>
             <Modal show={show} onHide={handleClose}>
@@ -89,8 +70,6 @@ function Profile() {
                 </svg>
                 , lets get started on tracking your projects</h1>
             <p className="description">We have your email as {email}.</p>
-            {/* <TODO: get total hours spent on projects> */}
-            <p className="description">You worked on your projects for <span className="fw-bold">{formatDigit(hour)}:{formatDigit(min)}:{formatDigit(sec)}:{formatDigit(milliseconds).substring(0,2)}</span> today.</p>
             <Button variant="dark" onClick={goToProjects}>
                 Go to Projects
             </Button>
