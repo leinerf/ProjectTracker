@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
 
-function ProjectModel({project, setProject, show, setShow, submitHandler, type}) {
+function ProjectModel({project, setProject, show, setShow, submitHandler}) {
     const [valid, setValid] = useState({})
     const [showErrors, setShowErrors] = useState(false)
     
@@ -22,11 +22,13 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
         setShowErrors(false);
         setShow(false);
     };
+
     const editProject = (event) => {
         const {name, value} = event.target
         setProject({...project, [name]: value});
         setValid({...valid,[name]: value.length !== 0 })
     }
+
     const handleSubmit = (event) => {
         event.preventDefault()
         if(Object.values(valid).includes(false)){
@@ -37,7 +39,6 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
             setShow(false)
             setShowErrors(false);
         }
-        
     }
 
     const inputErrors = () => {
@@ -52,12 +53,12 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
         })
         return errors
     }
-    
+
     return <>
         <Modal show={show} onHide={handleClose}>
             <Form>
                 <Modal.Header closeButton>
-                <Modal.Title>{type === "add" ? "New Project" : "Edit Project"}</Modal.Title>
+                <Modal.Title>{project.id ? "Edit Project" : "New Project"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                         { showErrors ? inputErrors() : null }    
@@ -71,15 +72,17 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
                         </Form.Group>
                         <Form.Group className="mb-3" >
                             <Form.Label>Due Date</Form.Label>
-                            <Form.Control type="date" name={"dueDate"} value={project.dueDate} onChange={editProject} required={true}/>
+                            <Form.Control type="date" name={"due_date"} value={ project.due_date ? project.due_date.substring(0, 10) : ""} onChange={editProject} required={true}/>
                         </Form.Group>
                         <Form.Group className="mb-3" >
                             <Form.Label>Priority</Form.Label>
                                 <Form.Select aria-label="priority select" name={"priority"} value={project.priority} onChange={editProject} required={true}>
-                                    <option>Open this select menu</option>
-                                    {Array.from({length: 9}, (_, i) => i + 1).map(
+                                    <option value="">Select a priority</option>
+                                    {Array.from({length: 9}, (_, i) => 9 - i).map(
                                         (num) => (
-                                            <option value={num}>{num}</option>
+                                            <option key={num} value={num}>
+                                                {num}
+                                            </option>
                                         )
                                     )}
                                 </Form.Select>
@@ -87,9 +90,9 @@ function ProjectModel({project, setProject, show, setShow, submitHandler, type})
                         <Form.Group className="mb-3" >
                             <Form.Label>Status</Form.Label>
                             <Form.Select aria-label="status select" name={"status"} value={project.status} onChange={editProject} required={true}>
-                                <option>Open this select menu</option>
+                                <option value="">Select a status</option>
                                 <option value="inProgress">InProgress</option>
-                                {type === "edit" && (
+                                {project.id && (
                                     <option value="completed">Completed</option>
                                 )}
                             </Form.Select>

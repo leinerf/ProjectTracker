@@ -1,19 +1,62 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import Stack from 'react-bootstrap/Stack';
 import { useNavigate } from "react-router";
-import { pullProjects, addProject, updateProject, deleteProject } from "../util/api.js"
+import { getProjects, addProject, updateProject, deleteProject } from "../util/api.js"
 import ProjectModel from "./ProjectModel.jsx";
 import InfoModal from "./InfoModal.jsx";
+import Form from 'react-bootstrap/Form';
+
 import "./Projects.css"
 
 function Projects(){
     let navigate = useNavigate();
     const [projects, setProjects] = useState([]);
-    const getProjects = async () => {
+    const [sortFn, setSortFn] = useState("sortByName");
+    const [projectStatus, setProjectStatus] = useState("inProgress");
+
+    const sortFns = {
+        sortByName: (a, b) => {
+            if(a.name < b.name){
+                return -1;
+            }
+            if(a.name > b.name){
+                return 1;
+            }
+            return 0;
+        },
+        sortByDueDate: (a, b) => {
+            const aDate = new Date(a.due_date);
+            const bDate = new Date(b.due_date);
+            if(aDate < bDate){
+                return -1;
+            }
+            if(aDate > bDate){
+                return 1;
+            }
+            return 0;
+        },
+        sortByPriority: (a, b) => {
+            if(a.priority < b.priority){
+                return -1;
+            }
+            if(a.priority > b.priority){
+                return 1;
+            }
+            return 0;
+        }
+    }
+    
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        projects.sort(sortFns[sortFn])
+        setProjects([...projects]);
+    }, [sortFn])
+    
+    const pullProjects = async () => {
         try {
-            const pulledProjects = await pullProjects("true");
+            const pulledProjects = await getProjects();
             if(pulledProjects !== undefined){
+                pulledProjects.sort(sortFns[sortFn]);
                 setProjects(pulledProjects);
             }
         } catch(err){
@@ -24,7 +67,7 @@ function Projects(){
     useEffect(
         () => {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            getProjects();
+            pullProjects();
         }, []
     )
 
@@ -33,8 +76,8 @@ function Projects(){
 
     const addSubmitHandler = async () => {
         try {
-            await addProject(projectToAdd);
-            getProjects();
+            const resp = await addProject(projectToAdd);
+            resp.project && setProjects([...projects, resp.project].sort(sortFns[sortFn]));
         }catch(err){
             console.error(err);
         }
@@ -43,14 +86,34 @@ function Projects(){
     const [projectToEdit, setProjectToEdit] = useState({name: "", description: ""})
     const [showEdit, setShowEdit] = useState(false);
 
+    const showEditModel = (project) => {
+        setProjectToEdit(project);
+        setShowEdit(true);
+    }
+
     const editSubmitHandler = async () => {
         try {
-            await updateProject(projectToEdit);
-            getProjects();
+            const resp = await updateProject(projectToEdit);
+            if (resp.project) {
+                setProjects(projects.map(p => p.id === resp.project.id ? resp.project : p).sort(sortFns[sortFn]));
+            }
+        } catch(err){
+            console.error(err);
+        }
+    }
+
+    const deleteHandler = async (project) => {
+        try {
+            const resp = await deleteProject(project);
+            if(resp === 204) {
+                setProjects(projects.filter(p => p.id !== project.id));
+            }
+            // TODO delete project in projects state instead of pulling all projects again
         }catch(err){
             console.error(err);
         }
     }
+
     const redirectBtnHandler = (project) => {
         navigate(project.id)
     }
@@ -63,6 +126,7 @@ function Projects(){
         setShowInfo(true);
     }
     
+    const filteredProjects = projects.filter(project => project.status ===  projectStatus);
     return <>
         <ProjectModel project={projectToAdd} setProject={setProjectToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler} type="add"/>
         <ProjectModel project={projectToEdit} setProject={setProjectToEdit} show={showEdit} setShow={setShowEdit} submitHandler={editSubmitHandler} type="edit"/>
@@ -77,30 +141,42 @@ function Projects(){
                 </Button>
             </h1>
             <div className="row-container">
-                <span style={{ fontWeight: 'bold', textDecoration: 'underline' }}>In Progress</span>
-                <span>Completed</span>
+                <span className="tab" onClick={() => setProjectStatus("inProgress")} style={projectStatus === "inProgress" ? { fontWeight: 'bold', textDecoration: 'underline' } : null}>In Progress</span>
+                <span className="tab" onClick={() => setProjectStatus("completed")} style={projectStatus === "completed" ? { fontWeight: 'bold', textDecoration: 'underline' } : null}>Completed</span>
+                <select name="sort" id="sort" value={sortFn} onChange={(e) => setSortFn(e.target.value)}> 
+                    {Object.keys(sortFns).map((key) => {
+                        return <option className="sort-option" key={key} value={key}>{key}</option>
+                    })}
+                </select>
             </div>
             <hr className="thick-hr long-hr"/>
+            
             <div className="fixed-height">
-                {projects.map(
+                {filteredProjects.map(
                     project => {
                         return <div  key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
                             <div className="d-flex justify-content-between flex-wrap align-items-center">
                                 <div>
-                                    <h4>{project.name}</h4>
+                                    <h4>{project.name.substring(0, 10)}{project.name.length > 10 ? "..." : ""}</h4>
                                 </div>
                                 <div className="row-container d-flex gap-2 align-items-center flex-wrap">
                                     <button className="box-info" onClick={() => showInfoModel(project)} >
                                         <span>Details</span>
                                     </button>  
-                                    <button className="box-info due-date">
-                                        <span>Due: {project.due_date ? new Date(project.due_date).toLocaleDateString() : "No due date"}</span>
-                                    </button>
-                                    <button className="box-info priority">
+                                    <div className="box-info due-date" >
+                                        <span>Due: {project.due_date ? project.due_date.substring(0, 10) : "No due date"}</span>
+                                    </div>
+                                    <div className="box-info priority" >
                                         <span>Priority: {project.priority}</span>
-                                    </button>
+                                    </div>
                                     <button className="box-info" onClick={() => redirectBtnHandler(project)}>
                                         <span>Manage</span>
+                                    </button>
+                                    <button className="box-info" onClick={() => showEditModel(project)}>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button className="box-info" onClick={() => deleteHandler(project)}>
+                                        <span>Delete</span>
                                     </button>
                                 </div>
                             </div>

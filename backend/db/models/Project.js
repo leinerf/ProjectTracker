@@ -15,6 +15,9 @@ const Project = sequelize.define(
         },
         description: {
             type: DataTypes.TEXT('medium'),
+            validate: {
+                isNotEmptyString
+            }
         },
         id: {
             type: Sequelize.UUID,
@@ -49,6 +52,10 @@ const Project = sequelize.define(
         },
         due_date: {
             type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true
+            }
         },
         priority: {
             type: DataTypes.INTEGER,

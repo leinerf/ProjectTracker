@@ -139,3 +139,14 @@ button.btn-circle>svg {
     align-items: center;
     background-color: inherit;
 }
+
+.tab {
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1.5em;
+}
+
+.tab:hover {
+    cursor: pointer;
+    background-color: #e5e5e5;
+}
