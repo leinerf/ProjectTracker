@@ -12,6 +12,7 @@ import InfoModal from './InfoModal';
 
 import './Project.css'
 import './StopWatch.css'
+import ProjectDetails from './ProjectDetails';
 
 const TaskInfoModel = ({task, handleClose, show}) => {
     const {hour, min, sec, milliseconds: milli} = hourMinSecondsMilli(task.milliseconds)
@@ -36,6 +37,7 @@ const TaskInfoModel = ({task, handleClose, show}) => {
 
 function Project() {
     const [project, setProject] = useState({});
+    const [editProject, setEditProject] = useState({})
     const [tasks, setTasks] = useState([]);
     const [activeTasks, setActiveTasks] = useState([]);
     const [finishedTasks, setFinishedTasks] = useState([]);
@@ -43,13 +45,16 @@ function Project() {
     const [active, setActive] = useState(null)
     const [show, setShow] = useState(false);
     const [time, setTime] = useState(0);
+
+    // refactor stuff
+    const [tab, setTab] = useState("details")
     const params = useParams()
     const {projectId: id } = params
     
     const pullProject = async (id) => {    
         const pulledProject = await getProject({ id },"true");
         setProject(pulledProject);
-        setTime(pulledProject.milliseconds);
+        setEditProject(pulledProject);
     }
 
     const pullTasks = async (id) => {
@@ -192,7 +197,6 @@ function Project() {
         setTaskType(taskType);
     }
 
-    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
     return <>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -216,17 +220,21 @@ function Project() {
         </Modal>
         <InfoModal project={projectInfo} show={showInfo} setShow={setShowInfo} />
         <TaskInfoModel task={taskInfo} show={showTaskInfo} handleClose={hideTaskModel}/>
+        
         <div>
-            <div className="mb-3 row-container  align-items-center">
-                <h1 className="header"><span>{project.name}</span></h1>
-                <Button variant="dark" className="btn-circle d-flex flex-column align-items-center justify-content-center" onClick={handleShow}>
-                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
-                        <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-                    </svg>
-                </Button>
-            </div>
-            
             <div className="mb-3">
+                <h1 className="header"><span>{project.name}</span></h1>
+                <div className="mb-3 row-container">
+                    <div className='fw-bold tab' onClick={()=> {setTab("session")}} style={tab === "session" ? {textDecoration: "underline"} : null}>Session</div>
+                    <div className='fw-bold tab' onClick={()=> {setTab("details")}} style={tab === "details" ? {textDecoration: "underline"} : null}>Details</div>
+                    <div className='fw-bold tab' onClick={()=> {setTab("history")}} style={tab === "history" ? {textDecoration: "underline"} : null}>History</div>
+                </div>
+            </div>
+            <hr className="thick-hr long-hr"/>
+            <div className='container'>
+                {tab === "details" && <ProjectDetails project={project}/>}
+            </div>
+            {/* <div className="mb-3">
                 <p>Description: {project.description ? project.description.substring(0, 200) + (project.description.length > 100 ? '...' : '') : 'No description available'}</p>
                 <Button variant="dark" className="align-icon " onClick={() => showInfoModel(project)}> Expand Description</Button>
             </div>
@@ -243,7 +251,7 @@ function Project() {
                     {taskType === "inProgress" ?  activeTasksList(): null}
                     {taskType === "finished" ? createTaskListByDate() : null}
                 </div>
-            </div>
+            </div> */}
         </div>
     </>
 }
