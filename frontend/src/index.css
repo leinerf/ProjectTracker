@@ -3,6 +3,7 @@ body {
     padding: 0;
     width: 100%;
     height: 100vh;
+    text-transform: capitalize;
 }
 
 p,
@@ -89,6 +90,12 @@ h6 {
     overflow-y: scroll;
     scrollbar-color: black white;
     scrollbar-width: thick;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .btn-circle {

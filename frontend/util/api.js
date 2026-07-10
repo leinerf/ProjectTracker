@@ -1,16 +1,11 @@
 import axios from "axios";
 
-const getProjects = async() => {
-    try {
-        const resp = await axios.get("/api/projects")
-        if (resp.status !== 200) {
-            throw new Error("status code not 200: " + resp.status)
-        }
-        return resp.data.projects
-    } catch (err) {
-        console.error(err);
-        return undefined;
+const getProjects = async(sort = "due_date", status = "inProgress", offset = 0, limit = 10) => {
+    const resp = await axios.get(`/api/projects?sort=${sort}&status=${status}&offset=${offset}&limit=${limit}`)
+    if (resp.status !== 200) {
+        throw new Error("status code not 200: " + resp.status)
     }
+    return resp.data
 }
 
 const getProject = async({ id }, time = "false") => {
@@ -41,7 +36,10 @@ const updateProject = async({ name, description, id, status, due_date, priority 
 
 const deleteProject = async({ id }) => {
     const resp = await axios.delete("/api/projects" + "/" + id);
-    return resp.status
+    if (resp.status !== 204) {
+        throw new Error("status code not 204: " + resp.status)
+    }
+    return resp.data
 }
 
 const getTasks = async(projectId) => {
