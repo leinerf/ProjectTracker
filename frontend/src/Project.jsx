@@ -37,7 +37,6 @@ const TaskInfoModel = ({task, handleClose, show}) => {
 
 function Project() {
     const [project, setProject] = useState({});
-    const [editProject, setEditProject] = useState({})
     const [tasks, setTasks] = useState([]);
     const [activeTasks, setActiveTasks] = useState([]);
     const [finishedTasks, setFinishedTasks] = useState([]);
@@ -45,7 +44,6 @@ function Project() {
     const [active, setActive] = useState(null)
     const [show, setShow] = useState(false);
     const [time, setTime] = useState(0);
-
     // refactor stuff
     const [tab, setTab] = useState("details")
     const params = useParams()
@@ -54,7 +52,6 @@ function Project() {
     const pullProject = async (id) => {    
         const pulledProject = await getProject({ id },"true");
         setProject(pulledProject);
-        setEditProject(pulledProject);
     }
 
     const pullTasks = async (id) => {
@@ -62,6 +59,7 @@ function Project() {
         setTasks(pulledTasks)
     }
 
+    
     
     useEffect(() => {
         pullProject(id)
@@ -232,7 +230,7 @@ function Project() {
             </div>
             <hr className="thick-hr long-hr"/>
             <div className='container'>
-                {tab === "details" && <ProjectDetails project={project}/>}
+                {tab === "details" && <ProjectDetails project={project} setProject={setProject}/>}
             </div>
             {/* <div className="mb-3">
                 <p>Description: {project.description ? project.description.substring(0, 200) + (project.description.length > 100 ? '...' : '') : 'No description available'}</p>
