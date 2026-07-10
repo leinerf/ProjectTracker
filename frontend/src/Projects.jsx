@@ -11,50 +11,61 @@ import "./Projects.css"
 function Projects(){
     let navigate = useNavigate();
     const [projects, setProjects] = useState([]);
-    const [sortOption, setSortOption] = useState("createdAt");
+    const [sortOption, setSortOption] = useState("priority");
     const [projectStatus, setProjectStatus] = useState("inProgress");
     const sortingOptions = ["name", "priority", "due_date", "createdAt"]
     const [offset, setOffset] = useState(0)
     const [limit, setLimit] = useState(10)
+    const [projectToEdit, setProjectToEdit] = useState({name: "", description: ""})
+    const [showEdit, setShowEdit] = useState(false);
 
-    
-    const pullProjects = async (sort, offset, limit, status) => {
+    const pullProjects = async (overhead, sortOption, projectStatus, offset, limit) => {
         try {
-            const pulledProjects = await getProjects(sort, offset, limit, status);
+            const data = await getProjects(sortOption, projectStatus, offset, limit);
+            const { projects: pulledProjects } = data;
             if(pulledProjects !== undefined){
-                setProjects(pulledProjects);
+                setProjects([...overhead, ...pulledProjects]);
             }
         } catch(err){
             console.error(err)
         }
     }
     
+    const loadProjects = () => {
+        try {
+            pullProjects(projects, sortOption, projectStatus, offset + limit, limit)
+            setOffset(offset + limit)
+        } catch(err){
+            console.error(err)
+        }
+    }
+
+    const resetProjects = () => {
+        pullProjects([], sortOption, projectStatus, 0, limit)
+        setOffset(0)
+        setProjects([])
+    }
+    useEffect(() => {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            pullProjects(projects, sortOption, projectStatus, offset, limit)
+    }, [])
+
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        pullProjects(sortOption, 0, 10, status)
-    }, [sortOption])
-
-    useEffect(
-        () => {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            pullProjects();
-        }, []
-    )
+        resetProjects()
+    }, [sortOption, projectStatus])
 
     const [projectToAdd, setProjectToAdd] = useState({name: "", description: ""})
     const [showAdd, setShowAdd] = useState(false);
 
     const addSubmitHandler = async () => {
         try {
-            const resp = await addProject(projectToAdd);
-            resp.project && setProjects([...projects, resp.project].sort(sortFns[sortFn]));
+            await addProject(projectToAdd);
+            resetProjects()
         }catch(err){
             console.error(err);
         }
     }
-
-    const [projectToEdit, setProjectToEdit] = useState({name: "", description: ""})
-    const [showEdit, setShowEdit] = useState(false);
 
     const showEditModel = (project) => {
         setProjectToEdit(project);
@@ -63,10 +74,8 @@ function Projects(){
 
     const editSubmitHandler = async () => {
         try {
-            const resp = await updateProject(projectToEdit);
-            if (resp.project) {
-                setProjects(projects.map(p => p.id === resp.project.id ? resp.project : p).sort(sortFns[sortFn]));
-            }
+            await updateProject(projectToEdit);
+            resetProjects()
         } catch(err){
             console.error(err);
         }
@@ -74,10 +83,8 @@ function Projects(){
 
     const deleteHandler = async (project) => {
         try {
-            const resp = await deleteProject(project);
-            if(resp === 204) {
-                setProjects(projects.filter(p => p.id !== project.id));
-            }
+            await deleteProject(project);
+            resetProjects()
             // TODO delete project in projects state instead of pulling all projects again
         }catch(err){
             console.error(err);
@@ -96,8 +103,6 @@ function Projects(){
         setShowInfo(true);
     }
     
-    const filteredProjects = projects.filter(project => project.status ===  projectStatus);
-    console.log(filteredProjects)
     return <>
         <ProjectModel project={projectToAdd} setProject={setProjectToAdd} show={showAdd} setShow={setShowAdd} submitHandler={addSubmitHandler} type="add"/>
         <ProjectModel project={projectToEdit} setProject={setProjectToEdit} show={showEdit} setShow={setShowEdit} submitHandler={editSubmitHandler} type="edit"/>
@@ -112,8 +117,8 @@ function Projects(){
                 </Button>
             </h1>
             <div className="row-container">
-                <select name="sort" className="selector" value={sortFn} onChange={(e) => setSortFn(e.target.value)}> 
-                    {Object.keys(sortFns).map((key) => {
+                <select name="sort" className="selector" value={sortOption} onChange={(e) => setSortOption(e.target.value)}> 
+                    {sortingOptions.map((key) => {
                         return <option className="sort-option" key={key} value={key}>{key}</option>
                     })}
                 </select>
@@ -125,7 +130,7 @@ function Projects(){
             <hr className="thick-hr long-hr"/>
             
             <div className="fixed-height column-container">
-                {filteredProjects.map(
+                {projects.map(
                     project => {
                         return <div  key={project.id}  style={project.completed? {textDecoration: "line-through" } : null}>
                             <div className="d-flex justify-content-between flex-wrap align-items-center">
@@ -158,7 +163,7 @@ function Projects(){
                     }
                 )}
                 <div className="align-self-center">
-                    <button className="box-info" onClick={() => console.log("load more")}>
+                    <button className="box-info" onClick={loadProjects}>
                         <span>Load more</span>
                     </button>
                 </div>       

@@ -14,12 +14,14 @@ const projectsRoutes = db => {
         handler: async(req, res) => {
             const { id: userID } = req.auth;
             const { sort, offset, limit, status } = req.query;
-            const sortingTypes = ["name", "priority", "due_date"]
+            const sortingTypes = ["name", "priority", "due_date", "createdAt"]
             const sortingOptions = {
                 "name": ["name", "ASC"],
-                "priority": ["priority", "DESC"],
+                "priority": ["priority", "ASC"],
                 "due_date": ["due_date", "ASC"],
+                "createdAt": ["createdAt", "DESC"]
             }
+
             if (sort !== undefined && !sortingTypes.includes(sort)) {
                 throw new ResourceBadRequest("projects", req.method)
             }
@@ -29,9 +31,10 @@ const projectsRoutes = db => {
             if (limit !== undefined && (isNaN(parseInt(limit)) || parseInt(limit) < 0)) {
                 throw new ResourceBadRequest("projects", req.method)
             }
-            if (status !== undefined && ["inProgress", "completed"].includes(status)) {
+            if (status !== undefined && !["inProgress", "completed"].includes(status)) {
                 throw new ResourceBadRequest("projects", req.method)
             }
+
             const projects = await db.Project.findAll({
                 where: { user_id: userID, status: status !== undefined ? status : "inProgress" },
                 order: sort !== undefined ? [sortingOptions[sort]] : [sortingOptions.due_date],

@@ -1,30 +1,36 @@
-import { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from "react-bootstrap/Button";
-import { formatDigit, hourMinSecondsMilli } from '../util';
+
 function InfoModal({project, show, setShow}) {
     const handleClose = () => {
         setShow(false);
     };
 
-    const [time, setTime] = useState(0);
-    useEffect(() => {
-        if(show){
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setTime(project.milliseconds)
-        }
-    }, [show])
-
-    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header >
-                <Modal.Title>{project.name}</Modal.Title>
+                <Modal.Title>Project Details</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p className='mb-3'>
-                    Description: <br/>
+                    <span className='fw-bold'>Project</span>: <br/>
+                    {project.name}
+                </p>
+                <p className='mb-3'>
+                    <span className='fw-bold'>Description</span>: <br/>
                     {project.description}
+                </p>
+                <p className='mb-3'>
+                    <span className='fw-bold'>Due Date</span>: <br/>
+                    {project.due_date && project.due_date.substring(0, 10)}
+                </p>
+                <p className='mb-3'>
+                    <span className='fw-bold'>Priority</span>: <br/>
+                    {project.priority}
+                </p>
+                <p className='mb-3'>
+                    <span className='fw-bold'>Status</span>: <br/>
+                    {project.status}
                 </p>
             </Modal.Body>
             <Modal.Footer>
