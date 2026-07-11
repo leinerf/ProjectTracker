@@ -164,6 +164,94 @@ const projectsRoutes = db => {
             const hyperLinks = createHyperLinks()
             return res.status(204).json({ links: hyperLinks });
         }
+    }, {
+        method: httpMethods.post,
+        url: `${baseUrl}/:id/sessions`,
+        handler: async(req, res) => {
+            // creates a task and update project session to task
+            const { name, detail } = req.body;
+            const { id: project_id } = req.params;
+            const { id: user_id } = req.auth;
+
+            if (name === undefined || name.length === 0 || detail === undefined || detail.length === 0) {
+                throw new ResourceBadRequest("projects", req.method)
+            }
+
+            const session = await db.Session.findOne({ where: { user_id, project_id } });
+            if (session === null) {
+                throw new ResourceNotFound("project/session", httpMethods.post)
+            }
+
+            const task = await db.Task.create({
+                name,
+                detail,
+                project_id,
+                user_id
+            })
+
+            session.task_id = task.id;
+            session.save()
+
+            const hyperLinks = createHyperLinks(project_id)
+
+            return res.status(201).json({
+                task: task.toJSON(),
+                links: [
+                    ...hyperLinks,
+                    {
+                        rel: "sessions",
+                        href: baseURL + "/api/projects/" + projectID + "/sessions",
+                        auth: "required",
+                        action: httpMethods.post,
+                        types: ["application/json"]
+                    },
+                    {
+                        rel: "sessions",
+                        href: baseURL + "/api/projects/" + projectID + "/sessions",
+                        auth: "required",
+                        action: httpMethods.get,
+                        types: ["application/json"]
+                    }
+                ]
+            })
+        }
+    }, {
+        method: httpMethods.get,
+        url: `${baseUrl}/:id/sessions`,
+        handler: async(req, res) => {
+            // find session task
+            const { id: project_id } = req.params;
+            const { id: user_id } = req.auth;
+
+            const session = await db.Session.findOne({ where: { user_id, project_id } });
+            if (session === null) {
+                throw new ResourceNotFound("project/session", httpMethods.post)
+            }
+
+            const task = await db.Task.findOne({ where: { id: session.task_id } })
+            const hyperLinks = createHyperLinks(project_id)
+
+            return res.status(200).json({
+                task: task !== null ? task.toJSON() : null,
+                links: [
+                    ...hyperLinks,
+                    {
+                        rel: "sessions",
+                        href: baseURL + "/api/projects/" + projectID + "/sessions",
+                        auth: "required",
+                        action: httpMethods.post,
+                        types: ["application/json"]
+                    },
+                    {
+                        rel: "sessions",
+                        href: baseURL + "/api/projects/" + projectID + "/sessions",
+                        auth: "required",
+                        action: httpMethods.get,
+                        types: ["application/json"]
+                    }
+                ]
+            })
+        }
     }]
 }
 

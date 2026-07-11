@@ -1,8 +1,6 @@
-// update tables
-import User from "../models/User.js";
-import Task from "../models/Task.js";
-import Project from "../models/Project.js";
+// create tables
+import db from "../index.js"
 
-[User, Task, Project].forEach(table => {
-    table.sync()
+Object.keys(db).forEach(table => {
+    db[table].sync()
 })
