@@ -7,6 +7,13 @@ import { isNotEmptyString } from "../validators/index.js";
 const Task = sequelize.define(
     'Task', {
         // Model attributes are defined here
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                isNotEmptyString
+            }
+        },
         detail: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -52,12 +59,7 @@ const Task = sequelize.define(
             },
             allowNull: false
         },
-        start: {
-            // date that you created and worked on tasks
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        finish: {
+        complete: {
             type: DataTypes.DATE,
         },
         milliseconds: {

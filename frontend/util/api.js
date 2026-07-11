@@ -68,8 +68,8 @@ const getTasks = async(projectId) => {
     }
 }
 
-const addTask = async(projectId, { detail, start }) => {
-    const resp = await axios.post("/api/projects/" + projectId + "/tasks", { detail, start })
+const addTask = async(projectId, { name, detail }) => {
+    const resp = await axios.post("/api/projects/" + projectId + "/tasks", { name, detail })
     return resp.status
 }
 

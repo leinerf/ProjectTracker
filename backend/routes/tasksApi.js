@@ -32,16 +32,16 @@ const tasksRoutes = (db) => {
             method: httpMethods.post,
             url: baseUrl,
             handler: async(req, res) => {
-                const { detail, start } = req.body;
+                const { name, detail } = req.body;
                 const { projectId: project_id } = req.params;
                 const { id: user_id } = req.auth;
 
-                if (detail === undefined || detail.length === 0 || isNaN(new Date(start))) {
+                if (name === undefined || name.length === 0 || detail === undefined || detail.length === 0) {
                     throw new ResourceBadRequest("projects", req.method)
                 }
                 const task = await db.Task.create({
+                    name,
                     detail,
-                    start,
                     project_id,
                     user_id
                 })

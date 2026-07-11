@@ -39,17 +39,25 @@ function StopWatch({task, editTask, active, setActive}){
     const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
 
     return <>
-        <div className="stopwatch row-container align-items-center gap-2">
-            <div className="stopwatch-time">
-                <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
-            </div>
-            <div>
-                <Stack direction="horizontal" gap={2}>
-                    <Button variant="outline-dark" onClick={pauseHandler}>
-                        {active === task.id ? "Stop" : "Start"}
-                    </Button>
-                    <Button variant="outline-dark" onClick={doneHandler}>End</Button>
-                </Stack>
+        <div className="stopwatch-container box-info">
+            <div className="d-flex flex-column align-items-center gap-3">
+                <div className="d-flex flex-row align-items-center  gap-2">
+                    <div className="task-name">{task.name}</div> <Button variant="outline-dark" className="info-icon" onClick={() => {}}>i</Button>
+                </div>
+                <div className="stopwatch-time">
+                    <div>
+                        <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+                    </div>
+                </div>
+                <div>
+                    <Stack direction="horizontal" gap={2}>
+                        <Button variant="outline-dark" onClick={pauseHandler}>
+                            {active === task.id ? "Stop" : "Start"}
+                        </Button>
+                        <Button variant="outline-dark">Save</Button>
+                        <Button variant="outline-dark" onClick={doneHandler}>End</Button>
+                    </Stack>
+                </div>
             </div>
         </div>
     </>

@@ -1,6 +1,32 @@
+.task-name {
+    font-size: 1.5em;
+}
+
+.info-icon {
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-transform: lowercase;
+}
+
 .stopwatch-time {
     border-radius: 5px;
     border: 1px solid black;
-    width: 110px;
     padding: 6px 10px;
+    font-size: 3.0em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stopwatch-container {
+    width: 500px;
+    height: 250px;
+    margin: 15px;
+    padding: 15px;
 }
