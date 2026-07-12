@@ -14,13 +14,13 @@ const tasksRoutes = (db) => {
             handler: async(req, res) => {
                 const { projectId: project_id } = req.params;
                 const { id: user_id } = req.auth;
+                console.log({ project_id, user_id })
                 const tasks = await db.Task.findAll({ where: { project_id, user_id } });
                 if (tasks === null) {
                     throw new ResourceNotFound("tasks", req.method)
                 }
                 const taskList = tasks.map(task => {
-                    const { detail, id, done, start, milliseconds, finish } = task.dataValues
-                    return { detail, id, done, start, milliseconds, finish }
+                    return task.dataValues
                 });
                 const hyperLinks = createHyperLinks(project_id)
                 return res.status(200).json({
@@ -32,16 +32,16 @@ const tasksRoutes = (db) => {
             method: httpMethods.post,
             url: baseUrl,
             handler: async(req, res) => {
-                const { detail, start } = req.body;
+                const { name, detail } = req.body;
                 const { projectId: project_id } = req.params;
                 const { id: user_id } = req.auth;
 
-                if (detail === undefined || detail.length === 0 || isNaN(new Date(start))) {
+                if (name === undefined || name.length === 0 || detail === undefined || detail.length === 0) {
                     throw new ResourceBadRequest("projects", req.method)
                 }
                 const task = await db.Task.create({
+                    name,
                     detail,
-                    start,
                     project_id,
                     user_id
                 })
@@ -74,13 +74,13 @@ const tasksRoutes = (db) => {
             method: httpMethods.put,
             url: baseUrl + "/:taskId",
             handler: async(req, res) => {
-                const { detail, start, finish, milliseconds } = req.body;
+                const { name, detail, complete, milliseconds } = req.body;
                 const { projectId: project_id, taskId: id } = req.params;
                 const { id: user_id } = req.auth;
-
-                if (detail !== undefined && typeof detail !== "string" ||
-                    start !== undefined && isNaN(new Date(start)) ||
-                    finish !== undefined && isNaN(new Date(finish)) ||
+                console.log(req.body)
+                if (name !== undefined && typeof name !== "string" && name.length !== 0 ||
+                    detail !== undefined && typeof detail !== "string" && detail.length !== 0 ||
+                    complete !== undefined && isNaN(new Date(complete)) ||
                     milliseconds !== undefined && isNaN(Number(milliseconds))
                 ) {
                     throw new ResourceConflictError("projects", req.method);
@@ -91,9 +91,9 @@ const tasksRoutes = (db) => {
                     throw new ResourceNotFound("task", httpMethods.put)
                 }
                 task.set({
+                    name: name !== undefined ? name : task.name,
                     detail: detail !== undefined ? detail : task.detail,
-                    start: start !== undefined ? start : task.start,
-                    finish: finish !== undefined ? finish : task.finish,
+                    complete: complete !== undefined && complete !== null ? new Date(complete) : task.complete,
                     milliseconds: milliseconds !== undefined ? milliseconds : task.milliseconds
                 })
                 await task.save();

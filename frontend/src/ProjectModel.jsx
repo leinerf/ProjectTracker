@@ -99,11 +99,11 @@ function ProjectModel({project, setProject, show, setShow, submitHandler}) {
                         </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                <Button type="submit" variant="dark" onClick={handleSubmit}>
-                    <span>Save</span>
-                </Button>
                 <Button variant="secondary" onClick={handleClose}>
                     <span>Close</span>
+                </Button>
+                <Button type="submit" variant="dark" onClick={handleSubmit}>
+                    <span>Save</span>
                 </Button>
                 </Modal.Footer>
             </Form>

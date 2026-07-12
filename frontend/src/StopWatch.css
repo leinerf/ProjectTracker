@@ -1,6 +1,69 @@
+.task-name {
+    font-size: 1.5em;
+}
+
+.info-icon {
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-transform: lowercase;
+}
+
 .stopwatch-time {
     border-radius: 5px;
     border: 1px solid black;
-    width: 110px;
     padding: 6px 10px;
+    font-size: 3.0em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stopwatch-container {
+    width: 500px;
+    height: 250px;
+    margin: 15px;
+    padding: 15px;
+}
+
+
+/* Extra small devices (phones, 600px and down) */
+
+@media only screen and (max-width: 600px) {
+    .stopwatch-container {
+        width: 350px;
+        height: 250px;
+    }
+    .stopwatch-time {
+        border-radius: 5px;
+        border: 1px solid black;
+        padding: 6px 10px;
+        font-size: 2.0em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .stopwatch-container {
+        width: 250px;
+        height: 200px;
+    }
+    .stopwatch-time {
+        border-radius: 5px;
+        border: 1px solid black;
+        padding: 6px 10px;
+        font-size: 2.0em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 }
