@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { addTask } from '../util/api';
 
-function TaskModal({projectId, show, setShow}) {
+function TaskModal({updateSessionTask, projectId, show, setShow}) {
     const handleClose = () => setShow(false);
     const [task, setTask] = useState({name: "", detail: ""})
 
@@ -13,8 +13,12 @@ function TaskModal({projectId, show, setShow}) {
         setTask({...task, [name]: value})
     }
 
-    const submitHandler = () => {
-        addTask(projectId, task)
+    const submitHandler = async () => {
+        const data = await addTask(projectId, task)
+        if(data && data.task){
+            updateSessionTask(data.task)
+        }
+        
         setTask({name: "", detail: ""})
         setShow(false);
     }

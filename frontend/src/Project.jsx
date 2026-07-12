@@ -13,7 +13,7 @@ import ProjectSession from './ProjectSession';
 
 function Project() {
     const [project, setProject] = useState({});
-    const [tab, setTab] = useState("details");
+    const [tab, setTab] = useState("session");
     const params = useParams()
     const {projectId: id } = params
     

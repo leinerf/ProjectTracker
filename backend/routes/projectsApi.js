@@ -154,12 +154,6 @@ const projectsRoutes = db => {
             if (project === null) {
                 throw new ResourceNotFound("projects", req.method);
             }
-            const tasks = await db.Task.findAll({ where: { project_id: project.id, user_id: userID } })
-            if (tasks !== null) {
-                for (let i = 0; i < tasks.length; i++) {
-                    await tasks[i].destroy()
-                }
-            }
             await project.destroy();
             const hyperLinks = createHyperLinks()
             return res.status(204).json({ links: hyperLinks });

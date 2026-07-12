@@ -70,17 +70,23 @@ const getTasks = async(projectId) => {
 
 const addTask = async(projectId, { name, detail }) => {
     const resp = await axios.post("/api/projects/" + projectId + "/tasks", { name, detail })
-    return resp.status
+    return resp.data
 }
 
-const updateTask = async(projectId, taskId, { detail, start, milliseconds, finish }) => {
-    const resp = await axios.put("/api/projects/" + projectId + "/tasks/" + taskId, { detail, start, milliseconds, finish })
+const updateTask = async(projectId, taskId, { name, detail, milliseconds, complete }) => {
+    console.log({ name, detail, milliseconds, complete })
+    const resp = await axios.put("/api/projects/" + projectId + "/tasks/" + taskId, { name, detail, milliseconds, complete })
     return resp.status
 }
 
 const deleteTask = async(projectId, taskId) => {
     const resp = await axios.delete("/api/projects/" + projectId + "/tasks/" + taskId);
     return resp.status
+}
+
+const getSessionTask = async(projectId) => {
+    const resp = await axios.get("/api/projects/" + projectId + "/sessions")
+    return resp.data
 }
 
 export {
@@ -92,5 +98,6 @@ export {
     getTasks,
     addTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    getSessionTask
 }

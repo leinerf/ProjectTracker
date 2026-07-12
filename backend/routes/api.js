@@ -4,14 +4,15 @@ import httpMethods from './httpMethods.js';
 import projectsRoutes from './projectsApi.js';
 import usersRoutes from './usersAPI.js';
 import tasksRoutes from './tasksApi.js';
+import sessionsRoutes from './sessionsApi.js';
 
 export default (db) => {
     const router = express.Router();
     const usersRoutesList = usersRoutes(db);
     const projectRoutesList = projectsRoutes(db);
     const taskRoutesList = tasksRoutes(db);
-
-    const routes = [...projectRoutesList, ...usersRoutesList, ...taskRoutesList]
+    const sessionRoutesList = sessionsRoutes(db);
+    const routes = [...projectRoutesList, ...usersRoutesList, ...taskRoutesList, ...sessionRoutesList]
 
     const handlerWrapper = (handler, req, res) => {
         return async(req, res) => {
