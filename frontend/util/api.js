@@ -51,8 +51,8 @@ const getTasks = async(projectId) => {
         }
 
         const compareTasksDate = (a, b) => {
-            const aStart = new Date(a.start)
-            const bStart = new Date(b.start)
+            const aStart = new Date(a.createdAt)
+            const bStart = new Date(b.createdAt)
 
             if (aStart > bStart) {
                 return -1

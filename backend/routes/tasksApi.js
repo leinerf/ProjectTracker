@@ -14,6 +14,7 @@ const tasksRoutes = (db) => {
             handler: async(req, res) => {
                 const { projectId: project_id } = req.params;
                 const { id: user_id } = req.auth;
+                console.log({ project_id, user_id })
                 const tasks = await db.Task.findAll({ where: { project_id, user_id } });
                 if (tasks === null) {
                     throw new ResourceNotFound("tasks", req.method)
