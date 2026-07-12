@@ -52,17 +52,14 @@ function ProjectHistory({projectId}) {
                     const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
                     return (
                         <div key={task.id} className='task-container'>
-                            <div  className="active-task-entry d-flex mb-3 flex-wrap">
+                            <div  className="d-flex flex-row align-items-center mb-3 gap-2">                                
                                 <Button variant="outline-dark" className="info-icon" onClick={() => showTaskModel(task)}>i</Button>
-                                <div className="task-detail">
+                                <div>
                                     {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                                </div>    
+                                <div variant="outline-dark" >
+                                    <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
                                 </div>
-                                
-                                    
-                                    <div className="">
-                                        <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
-                                    </div>    
-                                
                             </div>
                             <hr />
                         </div>
