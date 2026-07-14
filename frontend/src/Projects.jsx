@@ -4,8 +4,6 @@ import { useNavigate } from "react-router";
 import { getProjects, addProject, updateProject, deleteProject } from "../util/api.js"
 import ProjectModel from "./ProjectModel.jsx";
 import InfoModal from "./InfoModal.jsx";
-import Form from 'react-bootstrap/Form';
-
 import "./Projects.css"
 
 function Projects(){
@@ -15,6 +13,7 @@ function Projects(){
     const [projectStatus, setProjectStatus] = useState("inProgress");
     const sortingOptions = ["name", "priority", "due_date", "createdAt"]
     const [offset, setOffset] = useState(0)
+    // eslint-disable-next-line no-unused-vars
     const [limit, setLimit] = useState(10)
     const [projectToEdit, setProjectToEdit] = useState({name: "", description: ""})
     const [showEdit, setShowEdit] = useState(false);
@@ -85,8 +84,7 @@ function Projects(){
         try {
             await deleteProject(project);
             resetProjects()
-            // TODO delete project in projects state instead of pulling all projects again
-        }catch(err){
+        } catch(err){
             console.error(err);
         }
     }
