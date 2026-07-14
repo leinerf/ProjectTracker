@@ -74,7 +74,6 @@ const addTask = async(projectId, { name, detail }) => {
 }
 
 const updateTask = async(projectId, taskId, { name, detail, milliseconds, complete }) => {
-    console.log({ name, detail, milliseconds, complete })
     const resp = await axios.put("/api/projects/" + projectId + "/tasks/" + taskId, { name, detail, milliseconds, complete })
     return resp.status
 }

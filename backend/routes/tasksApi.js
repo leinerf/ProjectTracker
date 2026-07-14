@@ -14,7 +14,6 @@ const tasksRoutes = (db) => {
             handler: async(req, res) => {
                 const { projectId: project_id } = req.params;
                 const { id: user_id } = req.auth;
-                console.log({ project_id, user_id })
                 const tasks = await db.Task.findAll({ where: { project_id, user_id } });
                 if (tasks === null) {
                     throw new ResourceNotFound("tasks", req.method)
@@ -77,7 +76,6 @@ const tasksRoutes = (db) => {
                 const { name, detail, complete, milliseconds } = req.body;
                 const { projectId: project_id, taskId: id } = req.params;
                 const { id: user_id } = req.auth;
-                console.log(req.body)
                 if (name !== undefined && typeof name !== "string" && name.length !== 0 ||
                     detail !== undefined && typeof detail !== "string" && detail.length !== 0 ||
                     complete !== undefined && isNaN(new Date(complete)) ||
