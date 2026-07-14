@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import appConfig from "../config.js";
+import httpMethods from "../routes/httpMethods.js";
 
 const jwtExp = (hours) => {
     return 60 * 60 * hours
@@ -53,6 +54,13 @@ const createHyperLinks = (projectID = null, taskID = null) => {
                 action: method,
                 types: ["application/json"]
             })
+        })
+        results.push({
+            rel: "projects",
+            href: baseURL + "/api/projects/" + projectID + "/time",
+            auth: "required",
+            action: httpMethods.get,
+            types: ["application/json"]
         })
     }
     if (taskID !== null) {

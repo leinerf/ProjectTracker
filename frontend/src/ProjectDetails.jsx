@@ -2,13 +2,20 @@
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import ProjectModel from "./ProjectModel";
-import { updateProject, deleteProject } from "../util/api";
+import { updateProject, deleteProject, getProjectTime } from "../util/api";
 import { useNavigate } from "react-router";
+import { hourMinSecondsMilliString } from "../util";
 
-function ProjectDetails({project, setProject}) {    
+function ProjectDetails({project, setProject, tab}) {    
     const [editProject, setEditProject] = useState({})
     const [show, setShow] = useState(false)
-
+    const [timeSpent, setTimeSpent] = useState({
+        total: 0,
+        yearly: 0,
+        monthly: 0,
+        weekly: 0,
+        daily: 0
+    })
     const navigate = useNavigate();
     const submitHandler = async () =>{
         try {
@@ -28,6 +35,18 @@ function ProjectDetails({project, setProject}) {
         }
     }
 
+    const pullProjectTime = async () =>{
+        const data = await getProjectTime(project)
+        const {total, yearly, monthly, weekly, daily } = data
+        setTimeSpent({total, yearly, monthly, weekly, daily})
+    }
+
+    useEffect(() => {
+        if(tab === "details"){
+            pullProjectTime();    
+        }
+    }, [tab])
+
     useEffect(() => {
         setEditProject({...project})
     }, [project])
@@ -46,11 +65,17 @@ function ProjectDetails({project, setProject}) {
         </div>
 
         <div className='mb-3'>
-            <h2 className='fw-bold mb-3'>Time Spent</h2>
-            <div className='mb-2'>Total: <span>40:57:23:88</span></div>
-            <div className='mb-2'>Yearly: <span>45:40:20:10</span></div>
-            <div className='mb-2'>Monthly: <span>20:32:23:87</span></div>
-            <div className='mb-2'>Weekly: <span>13:32:23:13</span></div>
+            <div className="mb-3">
+                <h2 className='fw-bold'>Time Spent</h2>
+                <p className="text-muted">hours:minutes:seconds</p>
+            </div>
+            
+            
+            <div className='mb-2'>Total: <span>{hourMinSecondsMilliString(timeSpent.total, false)}</span></div>
+            <div className='mb-2'>Yearly: <span>{hourMinSecondsMilliString(timeSpent.yearly, false)}</span></div>
+            <div className='mb-2'>Monthly: <span>{hourMinSecondsMilliString(timeSpent.monthly, false)}</span></div>
+            <div className='mb-2'>Weekly: <span>{hourMinSecondsMilliString(timeSpent.weekly, false)}</span></div>
+            <div className='mb-2'>Daily: <span>{hourMinSecondsMilliString(timeSpent.daily, false)}</span></div>
         </div>
 
         <div className='mb-3'>

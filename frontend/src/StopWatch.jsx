@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import Stack from "react-bootstrap/Stack";
-import { hourMinSecondsMilli, formatDigit } from "../util";
+import { hourMinSecondsMilliString } from "../util";
 import "./StopWatch.css";
 import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
 import TaskInfo from "./TaskInfo";
 import { deleteTask, updateTask } from "../util/api";
 
-function StopWatch({task, setTask}){
+function StopWatch({task, setTask, tab}){
     const [time, setTime] = useState(task.milliseconds);
     const [intialTime, setInitalTime] = useState(task.milliseconds)
     const [start, setStart] = useState(null);
@@ -64,7 +63,6 @@ function StopWatch({task, setTask}){
             console.error(err)
         }
     }
-    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(time);
 
     return <>
         <TaskInfo task={task} show={show} setShow={setShow}/>
@@ -75,7 +73,7 @@ function StopWatch({task, setTask}){
                 </div>
                 <div className="stopwatch-time">
                     <div>
-                        <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+                        <span>{hourMinSecondsMilliString(time)}</span>
                     </div>
                 </div>
                 <div>

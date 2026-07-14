@@ -8,6 +8,11 @@ const hourMinSecondsMilli = (milliseconds) => {
     return { hour, min, sec, milliseconds }
 }
 
+const hourMinSecondsMilliString = (milliseconds, showMilli = true) => {
+    const { hour, min, sec, milliseconds: milli } = hourMinSecondsMilli(milliseconds)
+    return `${formatDigit(hour)}:${formatDigit(min)}:${formatDigit(sec)}` + (showMilli ? `:${milli.toString().substring(0,2)}` : "")
+}
+
 const formatDigit = (time) => {
     return time.toString().padStart(2, '0');
 }
@@ -17,4 +22,4 @@ const formatDateTime = (dateTime) => {
     return `Date: ${date.getFullYear()}-${formatDigit(date.getMonth() + 1)}-${formatDigit(date.getDate())} Time: ${formatDigit(date.getHours())}:${formatDigit(date.getMinutes())}`
 }
 
-export { hourMinSecondsMilli, formatDigit, formatDateTime }
+export { hourMinSecondsMilli, hourMinSecondsMilliString, formatDigit, formatDateTime }

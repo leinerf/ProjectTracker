@@ -37,9 +37,15 @@ function Project() {
             </div>
             <hr className="thick-hr long-hr"/>
             <div className='container'>
-                {tab === "details" && <ProjectDetails project={project} setProject={setProject}/>}
-                {tab === "session" && <ProjectSession projectId={id}/>}
-                {tab === "history" && <ProjectHistory projectId={id} tab={tab}/>}
+                <div className={tab !== 'details' ? 'hide' : null}>
+                    <ProjectDetails project={project} setProject={setProject} tab={tab}/>
+                </div>
+                <div className={tab !== 'session' ? 'hide': null}>
+                    <ProjectSession projectId={id} tab={tab}/>
+                </div>
+                <div className={tab !== 'history' ? 'hide': null}>
+                    <ProjectHistory projectId={id} tab={tab}/>
+                </div>
             </div>
         </div>
     </>

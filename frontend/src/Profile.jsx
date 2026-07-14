@@ -6,7 +6,6 @@ import axios from "axios";
 import { getClientAuth, setClientAuth } from "../util/auth.js";
 import { useNavigate } from "react-router";
 import "./Profile.css"
-import { hourMinSecondsMilli, formatDigit } from "../util/index.js";
 
 function Profile() {
     const navigate = useNavigate();

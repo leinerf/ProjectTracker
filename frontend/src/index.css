@@ -157,3 +157,7 @@ button.btn-circle>svg {
     cursor: pointer;
     background-color: #e5e5e5;
 }
+
+.hide {
+    display: none;
+}
