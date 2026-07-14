@@ -12,4 +12,9 @@ const formatDigit = (time) => {
     return time.toString().padStart(2, '0');
 }
 
-export { hourMinSecondsMilli, formatDigit }
+const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime)
+    return `Date: ${date.getFullYear()}-${formatDigit(date.getMonth() + 1)}-${formatDigit(date.getDate())} Time: ${formatDigit(date.getHours())}:${formatDigit(date.getMinutes())}`
+}
+
+export { hourMinSecondsMilli, formatDigit, formatDateTime }

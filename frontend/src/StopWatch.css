@@ -31,6 +31,12 @@
     padding: 15px;
 }
 
+.time-border {
+    border: 1px solid black;
+    padding: 6px 10px;
+    border-radius: 25px;
+}
+
 
 /* Extra small devices (phones, 600px and down) */
 

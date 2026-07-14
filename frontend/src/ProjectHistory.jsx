@@ -12,7 +12,6 @@ function ProjectHistory({projectId}) {
 
     const pullTasks = async() => {
         const pulledTasks = await getTasks(projectId)
-        console.log(pulledTasks)
         if(pulledTasks){
             
             setTasks([...pulledTasks]);
@@ -21,7 +20,6 @@ function ProjectHistory({projectId}) {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        console.log("it went here")
         pullTasks();
         
     }, [])
@@ -49,16 +47,18 @@ function ProjectHistory({projectId}) {
                 <h1 className="start-date-header">{key}</h1>
                 <hr/>
                 {tasks.map((task) => {
-                    const {hour, min, sec, milliseconds} = hourMinSecondsMilli(task.milliseconds)
+                    const {hour, min, sec} = hourMinSecondsMilli(task.milliseconds)
                     return (
                         <div key={task.id} className='task-container'>
-                            <div  className="d-flex flex-row align-items-center mb-3 gap-2">                                
-                                <Button variant="outline-dark" className="info-icon" onClick={() => showTaskModel(task)}>i</Button>
-                                <div>
-                                    {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
-                                </div>    
-                                <div variant="outline-dark" >
-                                    <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>:<span>{formatDigit(milliseconds).substring(0,2)}</span>
+                            <div className="d-flex flex-row align-items-center mb-3 justify-content-between flex-wrap">                                
+                                <div className="d-flex flex-row gap-2 align-items-center m-1">
+                                    <Button variant="outline-dark" className="info-icon" onClick={() => showTaskModel(task)}>i</Button>
+                                    <div>
+                                        {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
+                                    </div>
+                                </div>
+                                <div className="time-border m-1">
+                                    <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>
                                 </div>
                             </div>
                             <hr />
@@ -73,7 +73,7 @@ function ProjectHistory({projectId}) {
         setShow(true)
         setTask(task)
     }
-    console.log(tasks)
+
     return <>
         <TaskInfo task={task} show={show} setShow={setShow}/>
         <h1>hello from Project History</h1>
@@ -82,7 +82,6 @@ function ProjectHistory({projectId}) {
                  {createTaskListByDate()}
             </div>
         </div>
-
     </>
 }
 

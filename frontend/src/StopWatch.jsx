@@ -17,7 +17,6 @@ function StopWatch({task, setTask}){
 
     const saveUpdatedTask = async () => {
         try{
-            console.log(task)
             await updateTask(task.project_id, task.id, {...task, milliseconds: time})
             setTask({...task, milliseconds: time})
         }
