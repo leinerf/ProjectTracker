@@ -89,7 +89,7 @@ function ProjectHistory({projectId, tab}) {
 
     return <>
         <TaskInfo task={task} show={show} setShow={setShow}/>
-        <h1>hello from Project History</h1>
+        <h1>Project History</h1>
         <div className="fixed-height">    
             <div className="mt-3 d-flex flex-column justify-content-start">
                  {createTaskListByDate()}
