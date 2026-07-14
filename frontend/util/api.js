@@ -42,29 +42,17 @@ const deleteProject = async({ id }) => {
     return resp.data
 }
 
-const getTasks = async(projectId) => {
+const getTasks = async(projectId, offset = 0, limit = 10, status = "inProgress") => {
     // gets tasks and sorts them by date
     try {
-        const resp = await axios.get("/api/projects/" + projectId + "/tasks")
+        const resp = await axios.get(`/api/projects/${projectId}/tasks?offset=${offset}&limit=${limit}&status=${status}`)
         if (resp.status !== 200) {
             throw new Error("status code not 200: " + resp.status)
         }
-
-        const compareTasksDate = (a, b) => {
-            const aStart = new Date(a.createdAt)
-            const bStart = new Date(b.createdAt)
-
-            if (aStart > bStart) {
-                return -1
-            } else if (aStart < bStart) {
-                return 1
-            }
-            return 0
-        }
-        return resp.data.tasks.sort(compareTasksDate);
+        return resp.data.tasks;
     } catch (err) {
         console.error(err);
-        return undefined;
+        return [];
     }
 }
 

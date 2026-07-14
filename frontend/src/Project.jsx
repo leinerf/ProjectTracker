@@ -41,7 +41,7 @@ function Project() {
             <div className='container'>
                 {tab === "details" && <ProjectDetails project={project} setProject={setProject}/>}
                 {tab === "session" && <ProjectSession projectId={id}/>}
-                {tab === "history" && <ProjectHistory projectId={id}/>}
+                {tab === "history" && <ProjectHistory projectId={id} tab={tab}/>}
             </div>
             {/* <div className="mb-3">
                 <p>Description: {project.description ? project.description.substring(0, 200) + (project.description.length > 100 ? '...' : '') : 'No description available'}</p>

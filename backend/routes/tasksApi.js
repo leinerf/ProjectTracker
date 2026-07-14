@@ -5,6 +5,7 @@ import ResourceConflictError from '../Errors/ResourceConflicError.js';
 import ResourceBadRequest from '../Errors/ResourceBadRequest.js';
 import httpMethods from './httpMethods.js';
 import { baseUrl as ProjectBaseUrl } from './projectsApi.js';
+import { Op } from 'sequelize';
 
 const baseUrl = ProjectBaseUrl + "/:projectId/tasks"
 const tasksRoutes = (db) => {
@@ -13,11 +14,39 @@ const tasksRoutes = (db) => {
             url: baseUrl,
             handler: async(req, res) => {
                 const { projectId: project_id } = req.params;
+                const { offset, limit, status } = req.query;
                 const { id: user_id } = req.auth;
-                const tasks = await db.Task.findAll({ where: { project_id, user_id } });
+
+                if (offset !== undefined && (isNaN(parseInt(offset)) || parseInt(offset) < 0)) {
+                    throw new ResourceBadRequest("projects", req.method)
+                }
+                if (limit !== undefined && (isNaN(parseInt(limit)) || parseInt(limit) < 0)) {
+                    throw new ResourceBadRequest("projects", req.method)
+                }
+                if (status !== undefined && !["inProgress", "completed"].includes(status)) {
+                    throw new ResourceBadRequest("projects", req.method)
+                }
+
+                const options = status === "completed" ? {
+                    [Op.not]: null
+                } : null;
+
+                const tasks = await db.Task.findAll({
+                    where: {
+                        project_id,
+                        user_id,
+                        complete: options
+                    },
+                    offset: offset !== undefined ? parseInt(offset) : 0,
+                    limit: limit !== undefined ? parseInt(limit) : 10,
+                    order: [
+                        ["createdAt", "DESC"]
+                    ]
+                });
                 if (tasks === null) {
                     throw new ResourceNotFound("tasks", req.method)
                 }
+
                 const taskList = tasks.map(task => {
                     return task.dataValues
                 });

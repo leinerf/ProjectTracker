@@ -5,24 +5,35 @@ import Button from "react-bootstrap/Button"
 import { useEffect } from "react";
 import { getTasks } from "../util/api";
 
-function ProjectHistory({projectId}) {
+function ProjectHistory({projectId, tab}) {
     const [tasks, setTasks] = useState([])
     const [task, setTask] = useState({})
     const [show, setShow] = useState(false)
-
-    const pullTasks = async() => {
-        const pulledTasks = await getTasks(projectId)
+    const [offset, setOffset] = useState(0);
+    const [limit, setLimit] = useState(10);
+    
+    const pullTasks = async(overhead, offset, limit, status) => {
+        const pulledTasks = await getTasks(projectId, offset, limit, status)
         if(pulledTasks){
-            
-            setTasks([...pulledTasks]);
+            setTasks([...overhead, ...pulledTasks]);
         }
     }
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        pullTasks();
-        
+        pullTasks([], offset, limit, "completed");
     }, [])
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setOffset(0);
+        setLimit(10)
+    }, [tab])
+    
+    const loadTasks = () => {
+        pullTasks(tasks, offset + limit, limit, "completed")
+        setOffset(offset + limit);
+    }
 
     const bucketTasksByDate = () => {
         let oldDate;
@@ -57,7 +68,7 @@ function ProjectHistory({projectId}) {
                                         {task.detail.substring(0, 50)}{task.detail.length > 50 ? '...': null}
                                     </div>
                                 </div>
-                                <div className="time-border m-1">
+                                <div className="box-info m-1">
                                     <span>{formatDigit(hour)}</span>:<span>{formatDigit(min)}</span>:<span>{formatDigit(sec)}</span>
                                 </div>
                             </div>
@@ -74,12 +85,18 @@ function ProjectHistory({projectId}) {
         setTask(task)
     }
 
+
     return <>
         <TaskInfo task={task} show={show} setShow={setShow}/>
         <h1>hello from Project History</h1>
         <div className="fixed-height">    
-            <div className="mt-3">
+            <div className="mt-3 d-flex flex-column justify-content-start">
                  {createTaskListByDate()}
+                <div className="align-self-center">
+                    <button className="box-info" onClick={loadTasks}>
+                        <span>Load more</span>
+                    </button>
+                </div> 
             </div>
         </div>
     </>
