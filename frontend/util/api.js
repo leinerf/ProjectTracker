@@ -42,6 +42,14 @@ const deleteProject = async({ id }) => {
     return resp.data
 }
 
+const getProjectTime = async({ id }) => {
+    const resp = await axios.get("/api/projects" + "/" + id + "/time");
+    if (resp.status !== 200) {
+        throw new Error("status code not 200: " + resp.status)
+    }
+    return resp.data
+}
+
 const getTasks = async(projectId, offset = 0, limit = 10, status = "inProgress") => {
     // gets tasks and sorts them by date
     try {
@@ -82,6 +90,7 @@ export {
     addProject,
     updateProject,
     deleteProject,
+    getProjectTime,
     getTasks,
     addTask,
     updateTask,

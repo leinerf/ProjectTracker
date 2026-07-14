@@ -90,7 +90,6 @@ const projectsRoutes = db => {
             }
 
             const { id: userID } = req.auth;
-            const { time } = req.query;
             const project = await db.Project.findOne({ where: { id, user_id: userID } });
 
             if (project === null) {
@@ -100,12 +99,6 @@ const projectsRoutes = db => {
             const projectObj = project.dataValues
             const hyperLinks = createHyperLinks(project.id);
 
-            if (time !== undefined) {
-                const tasks = await db.Task.findAll({ where: { user_id: userID, project_id: project.id } })
-                let milliseconds = 0;
-                tasks.forEach(task => milliseconds += task.milliseconds)
-                projectObj.milliseconds = milliseconds
-            }
             return res.status(200).json({
                 project: projectObj,
                 links: hyperLinks
@@ -157,6 +150,52 @@ const projectsRoutes = db => {
             await project.destroy();
             const hyperLinks = createHyperLinks()
             return res.status(204).json({ links: hyperLinks });
+        }
+    }, {
+        method: httpMethods.get,
+        url: `${baseUrl}/:id/time`,
+        handler: async(req, res) => {
+            const id = req.params.id
+            if (!uuidValidate(id)) {
+                throw new ResourceNotFound("project", "GET")
+            }
+            const { id: userID } = req.auth;
+            const tasks = await db.Task.findAll({ where: { user_id: userID, project_id: id } })
+            let total = 0,
+                yearly = 0,
+                monthly = 0,
+                weekly = 0,
+                daily = 0;
+            tasks.forEach(task => {
+                const taskDate = new Date(task.createdAt)
+                const currDate = new Date()
+                total += task.milliseconds
+                if (taskDate.getUTCFullYear() === currDate.getUTCFullYear()) {
+                    yearly += task.milliseconds
+                    if (taskDate.getUTCMonth() === currDate.getUTCMonth()) {
+                        monthly += task.milliseconds
+                        const daysApart = Math.floor((currDate.getTime() - taskDate.getTime()) / (1000 * 60 * 60 * 24));
+                        const weekDayApart = currDate.getUTCDay() - taskDate.getUTCDay()
+                        if (daysApart === weekDayApart) {
+                            weekly += task.milliseconds
+                            if (currDate.getUTCDate() === taskDate.getUTCDate()) {
+                                daily += task.milliseconds
+                            }
+                        }
+                    }
+                }
+            })
+
+            const hyperLinks = createHyperLinks(id)
+
+            return res.status(200).json({
+                total,
+                yearly,
+                monthly,
+                weekly,
+                daily,
+                links: hyperLinks
+            })
         }
     }]
 }
