@@ -7,7 +7,7 @@ import Button from "react-bootstrap/Button";
 import TaskInfo from "./TaskInfo";
 import { deleteTask, updateTask } from "../util/api";
 
-function StopWatch({task, setTask, tab}){
+function StopWatch({task, setTask}){
     const [time, setTime] = useState(task.milliseconds);
     const [intialTime, setInitalTime] = useState(task.milliseconds)
     const [start, setStart] = useState(null);

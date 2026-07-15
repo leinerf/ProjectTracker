@@ -25,10 +25,12 @@ function ProjectHistory({projectId, tab}) {
     }, [])
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        pullTasks([], 0, limit + offset, "completed");
-        setOffset(0);
-        setLimit(10);
+        if(tab === "history"){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            pullTasks([], 0, limit + offset, "completed");
+            setOffset(0);
+            setLimit(10);
+        }
     }, [tab])
     
     const loadTasks = () => {

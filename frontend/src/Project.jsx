@@ -41,7 +41,7 @@ function Project() {
                     <ProjectDetails project={project} setProject={setProject} tab={tab}/>
                 </div>
                 <div className={tab !== 'session' ? 'hide': null}>
-                    <ProjectSession projectId={id} tab={tab}/>
+                    <ProjectSession projectId={id}/>
                 </div>
                 <div className={tab !== 'history' ? 'hide': null}>
                     <ProjectHistory projectId={id} tab={tab}/>
