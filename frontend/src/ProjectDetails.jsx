@@ -43,11 +43,13 @@ function ProjectDetails({project, setProject, tab}) {
 
     useEffect(() => {
         if(tab === "details"){
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             pullProjectTime();    
         }
     }, [tab])
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setEditProject({...project})
     }, [project])
     
